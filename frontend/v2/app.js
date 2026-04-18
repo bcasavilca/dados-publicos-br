@@ -137,6 +137,9 @@ async function handleSearch() {
         state.results = data.resultados || [];
         state.loading = false;
         
+        // Analytics
+        window.ANALYTICS.logSearch(term, state.results.length);
+        
         elements.loadingState.style.display = 'none';
         
         if (state.results.length === 0) {
@@ -249,6 +252,9 @@ function createCard(item) {
     
     const scoreClass = score >= 70 ? 'high' : score >= 40 ? 'medium' : 'low';
     const qualidadeClass = `badge-qualidade-${qualidade.toLowerCase()}`;
+    
+    // Analytics tracking
+    const analyticsClick = `window.ANALYTICS.logClick('${item.tipo}', '${titulo.replace(/'/g, "\\'")}', ${score});`;
     
     return `
         <div class="card" onclick="openPreview('${btoa(JSON.stringify(item))}')">

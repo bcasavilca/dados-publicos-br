@@ -7,6 +7,32 @@
     <link rel="stylesheet" href="style.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Analytics Simples (Privacy-friendly) -->
+    <script>
+        // Analytics basico - apenas logs no console por enquanto
+        // Futuro: enviar para endpoint de analytics
+        window.ANALYTICS = {
+            searches: [],
+            clicks: [],
+            logSearch: function(term, results) {
+                this.searches.push({
+                    term: term,
+                    results: results,
+                    timestamp: new Date().toISOString()
+                });
+                console.log('[Analytics] Search:', term, '| Results:', results);
+            },
+            logClick: function(type, title, score) {
+                this.clicks.push({
+                    type: type,
+                    title: title,
+                    score: score,
+                    timestamp: new Date().toISOString()
+                });
+                console.log('[Analytics] Click:', type, '|', title);
+            }
+        };
+    </script>
 </head>
 <body>
     <div class="app">

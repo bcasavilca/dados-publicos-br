@@ -1,8 +1,0 @@
-services:
-  - type: web
-    name: dados-publicos-br
-    runtime: python
-    runtimeVersion: 3.11.0
-    buildCommand: pip install -r requirements.txt
-    startCommand: cd scripts && python api_simple.py
-    healthCheckPath: /health

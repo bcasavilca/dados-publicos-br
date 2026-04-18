@@ -1,0 +1,12 @@
+services:
+  - type: web
+    name: dados-publicos-br
+    env: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn scripts.api:app --bind 0.0.0.0:$PORT --workers 2 --timeout 60
+    envVars:
+      - key: FLASK_ENV
+        value: production
+      - key: PYTHON_VERSION
+        value: 3.10.0
+    healthCheckPath: /health

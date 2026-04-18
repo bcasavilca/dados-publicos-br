@@ -1,8 +1,32 @@
-Titulo,URL,Municipio,UF,Esfera,Poder,TipoFonte,TipoAcesso,Formato,Qualidade,Atualizacao
-Alagoas em Dados e Informacoes,http://dados.al.gov.br/,,AL,Estadual,Executivo,DadosAbertos,API/Download,CSV/JSON,Alta,Frequente
-Fortaleza Dados Abertos,http://dados.fortaleza.ce.gov.br/,Fortaleza,CE,Municipal,Executivo,DadosAbertos,API/Download,CSV/JSON,Alta,Frequente
-Dados Abertos TCM-CE,http://api.tcm.ce.gov.br/,,CE,Estadual,Legislativo,API,API,JSON,Alta,Frequente
-Portal da Transparencia Camara Municipal de Natal,https://www.cmnat.rn.gov.br/portal-da-transparencia,Natal,RN,Municipal,Legislativo,Transparencia,Scraping,HTML/XLS/PDF,Baixa,Irregular
-Transparencia Fortaleza 2023,https://transparencia.fortaleza.ce.gov.br/,Fortaleza,CE,Municipal,Executivo,Transparencia,Scraping,CSV,Baixa,Anual
-Recife Dados Abertos,http://dados.recife.pe.gov.br/,Recife,PE,Municipal,Executivo,DadosAbertos,API/Download,CSV/JSON,Alta,Frequente
-TCM-PI Dados Abertos,http://www.tcm.pi.gov.br/,,PI,Estadual,Legislativo,API,API,JSON,Media,Trimestral
+Titulo,URL,Municipio,UF,Esfera,Poder,TipoFonte,TipoAcesso,Formato,Qualidade,Atualizacao,Categoria
+Alagoas em Dados e Informacoes,http://dados.al.gov.br/,,AL,Estadual,Executivo,DadosAbertos,API/Download,CSV/JSON,Alta,Frequente,Geral
+Fortaleza Dados Abertos,http://dados.fortaleza.ce.gov.br/,Fortaleza,CE,Municipal,Executivo,DadosAbertos,API/Download,CSV/JSON,Alta,Frequente,Geral
+Dados Abertos TCM-CE,http://api.tcm.ce.gov.br/,,CE,Estadual,Legislativo,API,API,JSON,Alta,Frequente,Financas
+Portal da Transparencia Camara Municipal de Natal,https://www.cmnat.rn.gov.br/portal-da-transparencia,Natal,RN,Municipal,Legislativo,Transparencia,Scraping,HTML/XLS/PDF,Baixa,Irregular,Legislativo
+Transparencia Fortaleza 2023,https://transparencia.fortaleza.ce.gov.br/,Fortaleza,CE,Municipal,Executivo,Transparencia,Scraping,CSV,Baixa,Anual,Financas
+Recife Dados Abertos,http://dados.recife.pe.gov.br/,Recife,PE,Municipal,Executivo,DadosAbertos,API/Download,CSV/JSON,Alta,Frequente,Geral
+TCM-PI Dados Abertos,http://www.tcm.pi.gov.br/,,PI,Estadual,Legislativo,API,API,JSON,Media,Trimestral,Financas
+Portal da Transparencia Salvador,https://www.transparencia.salvador.ba.gov.br/,Salvador,BA,Municipal,Executivo,Transparencia,Scraping,HTML/PDF,Baixa,Mensal,Financas
+Dados Abertos Bahia,http://dados.ba.gov.br/,,BA,Estadual,Executivo,DadosAbertos,API/Download,CSV/JSON,Alta,Frequente,Geral
+Portal da Transparencia Aracaju,https://www.aracaju.se.gov.br/transparencia/,Aracaju,SE,Municipal,Executivo,Transparencia,Scraping,HTML/PDF,Baixa,Mensal,Financas
+Dados Abertos Sergipe,http://dados.se.gov.br/,,SE,Estadual,Executivo,DadosAbertos,API/Download,CSV/JSON,Media,Trimestral,Geral
+Portal da Transparencia Maceio,https://www.maceio.al.gov.br/transparencia/,Maceio,AL,Municipal,Executivo,Transparencia,Scraping,HTML/PDF,Baixa,Mensal,Financas
+Transparencia Joao Pessoa,https://transparencia.joaopessoa.pb.gov.br/,Joao Pessoa,PB,Municipal,Executivo,Transparencia,Scraping,HTML/PDF,Baixa,Mensal,Financas
+Dados Abertos Paraiba,http://dados.pb.gov.br/,,PB,Estadual,Executivo,DadosAbertos,API/Download,CSV/JSON,Alta,Frequente,Geral
+Transparencia Teresina,https://transparencia.teresina.pi.gov.br/,Teresina,PI,Municipal,Executivo,Transparencia,Scraping,HTML/PDF,Baixa,Mensal,Financas
+Dados.gov.br - Portal Nacional,http://dados.gov.br/,,BR,Federal,Executivo,DadosAbertos,API/Download,CSV/JSON,Alta,Frequente,Geral
+Dados Abertos Sao Paulo,http://dados.prefeitura.sp.gov.br/,Sao Paulo,SP,Municipal,Executivo,DadosAbertos,API/Download,CSV/JSON,Alta,Frequente,Geral
+Portal da Transparencia SP,https://www.transparencia.sp.gov.br/,,SP,Estadual,Executivo,Transparencia,Download,CSV/JSON,Alta,Mensal,Financas
+Dados Abertos Minas Gerais,https://dados.mg.gov.br/,,MG,Estadual,Executivo,DadosAbertos,API/Download,CSV/JSON,Alta,Frequente,Geral
+Transparencia Belo Horizonte,https://transparencia.bh.gov.br/,Belo Horizonte,MG,Municipal,Executivo,Transparencia,API/Download,JSON,Alta,Mensal,Financas
+Dados Abertos Rio Grande do Sul,https://dados.rs.gov.br/,,RS,Estadual,Executivo,DadosAbertos,API/Download,CSV/JSON,Alta,Frequente,Geral
+Transparencia Porto Alegre,https://www.portoalegre.rs.gov.br/transparencia/,Porto Alegre,RS,Municipal,Executivo,Transparencia,Scraping,HTML/PDF,Baixa,Mensal,Financas
+Dados Abertos Santa Catarina,https://dados.sc.gov.br/,,SC,Estadual,Executivo,DadosAbertos,API/Download,CSV/JSON,Alta,Frequente,Geral
+Transparencia Florianopolis,https://transparencia.pmf.sc.gov.br/,Florianopolis,SC,Municipal,Executivo,Transparencia,Scraping,HTML/PDF,Baixa,Mensal,Financas
+Dados Abertos Parana,https://dados.pr.gov.br/,,PR,Estadual,Executivo,DadosAbertos,API/Download,CSV/JSON,Alta,Frequente,Geral
+Transparencia Curitiba,https://transparencia.curitiba.pr.gov.br/,Curitiba,PR,Municipal,Executivo,Transparencia,Scraping,HTML/PDF,Media,Mensal,Financas
+Dados Abertos Distrito Federal,https://www.dados.df.gov.br/,,DF,Distrital,Executivo,DadosAbertos,API/Download,CSV/JSON,Alta,Frequente,Geral
+Transparencia Rio de Janeiro,https://transparencia.rio/,Rio de Janeiro,RJ,Municipal,Executivo,Transparencia,Scraping,HTML/PDF,Baixa,Mensal,Financas
+Data Rio,https://data.rio/,Rio de Janeiro,RJ,Municipal,Executivo,DadosAbertos,API/Download,CSV/JSON,Alta,Frequente,Geral
+Dados Abertos Goias,https://dados.go.gov.br/,,GO,Estadual,Executivo,DadosAbertos,API/Download,CSV/JSON,Media,Trimestral,Geral
+Transparencia Goiania,https://transparencia.goiania.go.gov.br/,Goiania,GO,Municipal,Executivo,Transparencia,Scraping,HTML/PDF,Baixa,Mensal,Financas

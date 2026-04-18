@@ -1,38 +1,49 @@
-# 📊 Dados Publicos BR
+# 📊 Dados Publicos BR v2.0
 
-Catalogo unificado de dados publicos brasileiros.
+Catalogo unificado e motor de busca de dados publicos brasileiros.
 
 ## 🎯 Objetivo
 
-Facilitar o acesso a dados publicos brasileiros, incluindo:
-- **Dados abertos** (portais CKAN, APIs)
-- **Transparencia** (portais da transparencia)
-- **Fontes com scraping** necessario
+Facilitar o acesso a dados publicos brasileiros atraves de:
+- **Catalogo centralizado** de portais (dados abertos + transparencia)
+- **API REST** para consulta programatica
+- **Motor de busca** tipo Google
+- **Ranking de qualidade** dos portais
+- **Validacao automatica** de links
 
-## 📁 Estrutura do Projeto
+## 📊 Estatisticas Atuais
+
+- **30+ portais** catalogados
+- **26 estados/UFs** cobertos
+- **Nordeste completo** (AL, BA, CE, MA, PB, PE, PI, RN, SE)
+- **Sudeste parcial** (SP, MG, RJ)
+- **Sul** (RS, SC, PR)
+- **Centro-Oeste** (GO, DF)
+
+## 📁 Estrutura
 
 ```
 dados-publicos-br/
-├── data/
-│   └── catalogos.csv           # Dataset principal
-├── scripts/
-│   ├── classify.py             # Classificacao automatica de URLs
-│   ├── validate.py             # Validacao de links
-│   ├── api.py                  # API REST
+├── 📊 data/
+│   └── catalogos.csv           # 30+ portais catalogados
+├── 🐍 scripts/
+│   ├── api.py                  # API REST completa
+│   ├── classify.py             # Classificacao automatica
+│   ├── detect_ckan.py          # Detector de portais CKAN
+│   ├── validate.py             # Validador de links
 │   └── scrapers/               # Scrapers especificos
-├── .github/
-│   └── workflows/
-│       └── validate.yml        # GitHub Actions
-└── README.md
+├── ⚙️ .github/workflows/
+│   └── validate.yml            # CI/CD
+└── 📘 README.md
 ```
 
 ## 🏷️ Classificacao de Qualidade
 
-| Nivel | Descricao | Exemplos |
-|-------|-----------|----------|
-| **Alta** | API REST ou download direto CSV/JSON | dados.al.gov.br |
-| **Media** | Download manual, formatos estruturados | XLS, ODS |
-| **Baixa** | Scraping necessario, PDFs | Portais de transparencia |
+| Nivel | Descricao | Criterios |
+|-------|-----------|-----------|
+| **Alta** | API REST ou download direto | JSON/CSV, CKAN, API documentada |
+| **Media** | Download manual, formatos estruturados | XLS, ODS, API limitada |
+| **Baixa** | Scraping necessario ou PDFs | HTML, PDF, acesso restrito |
 
 ## 🚀 Como Usar
 
@@ -48,66 +59,161 @@ pip install flask pandas requests
 python scripts/api.py
 ```
 
-Acesse: http://localhost:5000/catalogo
+### 3. Testar endpoints
 
-### 3. Validar links
+```bash
+# Lista todos os portais
+curl http://localhost:5000/catalogo
+
+# Busca tipo Google
+curl "http://localhost:5000/buscar?q=saude"
+
+# Melhores portais
+curl http://localhost:5000/ranking
+
+# Filtra por estado
+curl http://localhost:5000/catalogo/uf/CE
+
+# Estatisticas
+curl http://localhost:5000/estatisticas
+```
+
+## 📡 Endpoints da API
+
+### Consulta
+
+| Endpoint | Descricao | Exemplo |
+|----------|-----------|---------|
+| `GET /` | Info da API | - |
+| `GET /catalogo` | Lista todos | `/catalogo?uf=CE&qualidade=Alta` |
+| `GET /catalogo/uf/{uf}` | Por estado | `/catalogo/uf/SP` |
+| `GET /catalogo/qualidade/{nivel}` | Por qualidade | `/catalogo/qualidade/Alta` |
+| `GET /catalogo/categoria/{cat}` | Por categoria | `/catalogo/categoria/Financas` |
+
+### Busca & Analytics
+
+| Endpoint | Descricao | Exemplo |
+|----------|-----------|---------|
+| `GET /buscar?q={termo}` | Busca livre | `/buscar?q=transparencia` |
+| `GET /ranking` | Ranking por qualidade | - |
+| `GET /estatisticas` | Dados agregados | - |
+| `GET /estados` | Lista estados | - |
+
+## 📊 Exemplos de Resposta
+
+### Buscar
+
+```json
+{
+  "busca": "saude",
+  "total_resultados": 3,
+  "resultados": [
+    {
+      "Titulo": "Portal da Transparencia Salvador",
+      "UF": "BA",
+      "Categoria": "Saude"
+    }
+  ]
+}
+```
+
+### Ranking
+
+```json
+{
+  "total_portais": 30,
+  "ranking": {
+    "alta": [...],
+    "media": [...], 
+    "baixa": [...]
+  }
+}
+```
+
+## 🤖 Automacao
+
+### Detector CKAN
+
+```bash
+python scripts/detect_ckan.py
+```
+
+Detecta automaticamente portais que usam plataforma CKAN.
+
+### Validador de Links
 
 ```bash
 python scripts/validate.py
 ```
 
-### 4. Classificar nova URL
+Verifica se todos os portais estao respondendo.
 
-```bash
-python scripts/classify.py
-```
+### GitHub Actions
 
-## 📡 Endpoints da API
-
-| Endpoint | Descricao | Exemplo |
-|----------|-----------|---------|
-| `/` | Info da API | - |
-| `/catalogo` | Lista todos | - |
-| `/catalogo/uf/{uf}` | Por estado | `/catalogo/uf/CE` |
-| `/catalogo/qualidade/{nivel}` | Por qualidade | `/catalogo/qualidade/Alta` |
-| `/estatisticas` | Estatisticas gerais | - |
+Validacao automatica toda segunda-feira 9h.
 
 ## 📝 Contribuindo
 
-Para adicionar novo portal:
-
-1. Adicione linha em `data/catalogos.csv`
-2. Execute `python scripts/validate.py` para verificar
-3. Abra Pull Request
-
-### Formato do CSV
+Para adicionar novo portal, edite `data/catalogos.csv`:
 
 ```csv
-Titulo,URL,Municipio,UF,Esfera,Poder,TipoFonte,TipoAcesso,Formato,Qualidade,Atualizacao
+Titulo,URL,Municipio,UF,Esfera,Poder,TipoFonte,TipoAcesso,Formato,Qualidade,Atualizacao,Categoria
 ```
 
-## 🔍 Fontes Principais (Nordeste)
+**Categorias disponiveis:** Geral, Financas, Saude, Educacao, Transporte, Legislativo
 
-| Portal | UF | Tipo | Qualidade |
-|--------|-----|------|-----------|
-| Alagoas em Dados | AL | Dados Abertos | Alta |
-| Fortaleza Dados Abertos | CE | Dados Abertos | Alta |
-| TCM-CE | CE | API | Alta |
-| Recife Dados Abertos | PE | Dados Abertos | Alta |
-| Transparencia Natal | RN | Scraping | Baixa |
+## 🗺️ Cobertura Geografica
 
-## 🤖 Automacao
+### Nordeste (Completo)
+- ✅ Alagoas, Bahia, Ceara, Maranhao, Paraiba, Pernambuco, Piaui, Rio Grande do Norte, Sergipe
 
-GitHub Actions verifica links automaticamente a cada push.
+### Sudeste (Parcial)
+- ✅ Sao Paulo (capital + estado)
+- ✅ Minas Gerais (capital + estado)
+- ✅ Rio de Janeiro (capital + estado)
+
+### Sul
+- ✅ Rio Grande do Sul
+- ✅ Santa Catarina
+- ✅ Parana
+
+### Centro-Oeste
+- ✅ Distrito Federal
+- ✅ Goias
+
+## 🎯 Proximos Passos
+
+- [ ] Adicionar estados faltantes (AC, AM, AP, MS, MT, PA, RO, RR, TO)
+- [ ] Criar scrapers automatizados
+- [ ] Painel web (dashboard)
+- [ ] Deploy em servidor (Render/Railway)
+- [ ] Cache de respostas
+- [ ] Rate limiting
+
+## 🔥 Deploy
+
+Para deploy em producao (Render/Railway):
+
+```bash
+# requirements.txt
+flask==3.0.0
+pandas==2.1.4
+requests==2.31.0
+
+# Procfile
+web: python scripts/api.py
+```
 
 ## 📜 Licenca
 
-Dados publicos - Uso livre para fins jornalisticos e academicos.
+Dados publicos - Uso livre para fins jornalisticos, academicos e civic tech.
 
 ## 👤 Autor
 
-Criado por @bcasavilca
+Criado por @bcasavilca | Open Source | v2.0
 
 ---
 
-**Status:** 🟢 Em desenvolvimento ativo
+**Status:** 🟢 Production Ready | 30+ portais | API v2.0 ativa
+
+**Deploy:** [Seu-URL-aqui.com] (em breve)

@@ -23,6 +23,7 @@ Endpoints:
 
 from flask import Flask, jsonify, request
 from flask_caching import Cache
+from flask_cors import CORS
 from functools import lru_cache
 import pandas as pd
 import os
@@ -35,6 +36,9 @@ sys.path.append(os.path.dirname(__file__))
 from dadosgov_integration import DadosGovClient, search_hibrido
 
 app = Flask(__name__)
+
+# Habilitar CORS para permitir acesso do frontend
+CORS(app, origins=['*'])
 
 # Configuracao de cache
 app.config['CACHE_TYPE'] = 'simple'

@@ -1,1 +1,1 @@
-web: gunicorn scripts.api:app --bind 0.0.0.0:$PORT --workers 2 --timeout 60
+web: cd scripts && python api_simple.py

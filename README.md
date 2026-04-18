@@ -1,137 +1,113 @@
-# 📊 Dados Públicos BR v2.2
+# 📊 Dados Públicos BR v3.0 - Search Engine Real
 
-**Buscador de portais de dados públicos brasileiros** - API + Frontend moderno
+**Motor de busca de dados públicos brasileiros** - Portais locais + Dados.gov.br
 
-🌐 **Live Demo:** [dados-publicos-br.vercel.app](https://dados-publicos-br.vercel.app) *(em breve)*  
-📡 **API:** [dados-publicos-br.onrender.com](https://dados-publicos-br.onrender.com) *(em breve)*
+🌐 **Live Demo:** https://dados-publicos-br.vercel.app  
+📡 **API:** https://dados-publicos-br.onrender.com
 
 ---
 
 ## ✨ O que é?
 
-Um **"Google dos dados públicos brasileiros"** que cataloga:
-- Portais de dados abertos (CKAN, APIs)
-- Portais de transparência
-- Fontes que precisam de scraping
+Um **"Google dos dados públicos brasileiros"** que une:
+- 🏛️ **30+ portais** de transparência municipais/estaduais
+- 📊 **Datasets do dados.gov.br** (API federal em tempo real)
+- 🔍 Busca unificada com ranking por relevância
 
 ---
 
-## 🎯 Características
+## 🎯 Características v3.0
 
-### Backend (API REST)
-- ✅ **30+ portais** catalogados
-- ✅ **26 estados** cobertos
-- ✅ Busca tipo Google (`/buscar?q=termo`)
-- ✅ Ranking por qualidade
-- ✅ Cache + healthcheck
-- ✅ Métricas em tempo real
+### Backend (API Híbrida)
+- ✅ **Busca unificada**: Portais locais + Dados.gov.br
+- ✅ **Ranking inteligente**: Score 0-100 por relevância
+- ✅ **Dados em tempo real**: Integração CKAN dados.gov.br
+- ✅ **CORS habilitado**: Para frontend Vercel
+- ✅ **Healthcheck**: /health para monitoramento
 
-### Frontend (Buscador)
-- ✅ Design moderno (Inter font, glassmorphism)
-- ✅ Filtros por qualidade, categoria, esfera
-- ✅ Cards responsivos
-- ✅ Estatísticas visuais
+### Frontend v2
+- ✅ Design tipo Google Dataset Search
+- ✅ Cards ricos com score visual
+- ✅ Filtros por tipo, qualidade, formato
+- ✅ Preview de detalhes
 - ✅ Mobile-first
 
 ---
 
-## 📊 Estatísticas
+## 📊 Dados Disponíveis
 
-| Métrica | Valor |
-|---------|-------|
-| Portais | 30+ |
-| Estados | 26 |
-| Alta Qualidade | 14 (47%) |
-| Nordeste | Completo (9 estados) |
-| Sudeste | 3 estados |
-| Sul | 3 estados |
-| Centro-Oeste | 2 estados |
+| Fonte | Quantidade | Tipo |
+|-------|-----------|------|
+| Portais Locais | 31 | CSV/JSON/API |
+| Dados.gov.br | ∞ (API) | Datasets federais |
+| **Total** | **31+** | **Misto** |
 
 ---
 
-## 🚀 Quick Start
+## 🚀 URLs de Produção
 
-### Backend (API)
-
-```bash
-pip install -r requirements.txt
-python scripts/api.py
-
-# Acesse: http://localhost:5000
+### Frontend (Vercel)
+```
+https://dados-publicos-br.vercel.app
 ```
 
-### Frontend (Buscador)
+### API (Render)
+```
+https://dados-publicos-br.onrender.com
+```
 
-```bash
-cd frontend
-npx serve
-
-# Acesse: http://localhost:3000
+### Endpoints
+```
+GET /buscar?q=termo          # Busca híbrida
+GET /datasets?q=termo        # Apenas dados.gov.br
+GET /catalogo                # Portais locais
+GET /health                  # Status
 ```
 
 ---
 
-## 📡 Endpoints da API
+## 📡 Exemplo de Uso
 
-### Busca
+### Buscar por "saude"
 ```bash
-GET /buscar?q=saude          # Busca tipo Google
-GET /catalogo                  # Lista todos
-GET /ranking                   # Ranking qualidade
-GET /estatisticas              # Métricas
+curl "https://dados-publicos-br.onrender.com/buscar?q=saude"
 ```
 
-### Filtros
-```bash
-GET /catalogo/uf/CE
-GET /catalogo/qualidade/Alta
-GET /catalogo/categoria/Financas
-```
-
-### Observabilidade
-```bash
-GET /health                    # Healthcheck
-GET /metrics                   # Métricas
+**Resposta:**
+```json
+{
+  "busca": "saude",
+  "total_resultados": 15,
+  "total_portais": 3,
+  "total_datasets": 12,
+  "resultados": [
+    {"tipo": "dataset", "titulo": "Vacinacao COVID-19", "score": 87},
+    {"tipo": "portal", "titulo": "Fortaleza Dados Abertos", "score": 50}
+  ]
+}
 ```
 
 ---
 
-## 🗂️ Estrutura
+## 🗂️ Estrutura do Projeto
 
 ```
 dados-publicos-br/
 ├── 📊 data/
-│   └── catalogos.csv            # 30+ portais
+│   └── catalogos.csv              # 31 portais locais
 ├── 🐍 scripts/
-│   ├── api.py                   # API Flask v2.2
-│   ├── classify.py              # Classificador
-│   ├── detect_ckan.py           # Detector CKAN
-│   └── validate.py              # Validador links
+│   ├── api_hibrida.py           # API v3.0 (produção)
+│   ├── dadosgov_crawler.py      # Crawler dados.gov.br
+│   └── api_simple.py            # Fallback simples
 ├── 🎨 frontend/
-│   ├── index.html               # Buscador
-│   ├── app.js                   # Lógica JS
-│   ├── style.css                # Design system
-│   └── package.json             # Vercel config
-├── ⚙️ .github/
-│   └── workflows/
-│       └── validate.yml         # CI/CD
+│   └── v2/                      # Buscador moderno
+│       ├── index.html
+│       ├── style.css
+│       └── app.js
 ├── requirements.txt             # Python deps
 ├── Procfile                     # Render config
-├── render.yaml                  # Deploy config
-└── README.md                    # Este arquivo
+└── runtime.txt                  # Python 3.11
 ```
-
----
-
-## 🎨 Design System
-
-### Cores Qualidade
-- **Alta:** Verde (#059669) - API/CSV
-- **Média:** Amarelo (#d97706) - Download
-- **Baixa:** Vermelho (#dc2626) - Scraping
-
-### Fonte
-- **Inter** (Google Fonts)
 
 ---
 
@@ -139,79 +115,40 @@ dados-publicos-br/
 
 ### Backend (Render)
 1. Conecte repo em [render.com](https://render.com)
-2. Configuração automática (`render.yaml`)
+2. Procfile detectado automaticamente
 3. Deploy!
 
 ### Frontend (Vercel)
 ```bash
-cd frontend
+cd frontend/v2
 npx vercel
 ```
 
-Ou use Netlify/GitHub Pages.
-
 ---
 
-## 📝 Contribuindo
+## 📝 Changelog
 
-Para adicionar portal, edite `data/catalogos.csv`:
+### v3.0 (Atual)
+- ✅ Integração dados.gov.br em tempo real
+- ✅ Busca híbrida (portais + datasets)
+- ✅ Score de relevância
+- ✅ Deploy produção
 
-```csv
-Titulo,URL,Municipio,UF,Esfera,Poder,TipoFonte,TipoAcesso,Formato,Qualidade,Atualizacao,Categoria
-```
+### v2.0
+- ✅ Frontend moderno
+- ✅ Filtros funcionais
+- ✅ Cards responsivos
 
-**Categorias:** Geral, Financas, Saude, Educacao, Transporte, Legislativo
-
----
-
-## 🗺️ Cobertura
-
-```
-✅ Nordeste: AL, BA, CE, MA, PB, PE, PI, RN, SE
-✅ Sudeste: SP, MG, RJ
-✅ Sul: RS, SC, PR
-✅ Centro-Oeste: GO, DF
-❌ Norte: (em breve)
-❌ Médio-Oeste: MS, MT (em breve)
-```
-
----
-
-## 🔮 Roadmap
-
-- [ ] Adicionar Norte e Centro-Oeste
-- [ ] Integrar datasets reais (dados.gov.br)
-- [ ] Autocomplete na busca
-- [ ] Dashboard com gráficos
-- [ ] Scrapers automatizados
-- [ ] Cache distribuído (Redis)
-
----
-
-## 💡 Uso
-
-### Exemplo: Buscar todos os portais de saúde
-
-```javascript
-fetch('https://api.dadospublicosbr.com/buscar?q=saude')
-  .then(r => r.json())
-  .then(data => console.log(data.resultados))
-```
-
----
-
-## 📜 Licença
-
-Dados públicos - Uso livre para fins jornalísticos, acadêmicos e civic tech.
+### v1.0
+- ✅ Catálogo de portais
+- ✅ Busca básica
 
 ---
 
 ## 👤 Autor
 
-Criado por [@bcasavilca](https://github.com/bcasavilca) | Open Source | v2.2
+Criado por [@bcasavilca](https://github.com/bcasavilca)
 
----
-
-**Status:** 🟢 Production Ready | API v2.2 | Frontend v1.0
+**Status:** 🟢 Online | v3.0 | Produção
 
 ⭐ Star no repo se for útil!

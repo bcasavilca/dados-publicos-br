@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dados Públicos BR - Motor de Busca</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="app">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <div class="logo">
+                    <span class="logo-icon">🔍</span>
+                    <h1>Dados Públicos BR</h1>
+                </div>
+                <nav class="nav">
+                    <a href="#" class="nav-link active">Buscar</a>
+                    <a href="#ranking" class="nav-link">Ranking</a>
+                    <a href="#api" class="nav-link">API</a>
+                </nav>
+            </div>
+        </header>
+
+        <!-- Hero Search -->
+        <section class="hero">
+            <div class="hero-content">
+                <h2 class="hero-title">Encontre dados públicos do Brasil</h2>
+                <p class="hero-subtitle">Busque em portais de transparência, dados abertos e datasets governamentais</p>
+                
+                <div class="search-box">
+                    <div class="search-input-wrapper">
+                        <span class="search-icon">🔍</span>
+                        <input 
+                            type="text" 
+                            id="searchInput" 
+                            placeholder="Ex: saúde, educação, orçamento, COVID..."
+                            autocomplete="off"
+                        >
+                        <button id="clearSearch" class="clear-btn" style="display: none;">×</button>
+                    </div>
+                    <button id="searchBtn" class="btn btn-primary btn-large">
+                        Buscar
+                    </button>
+                </div>
+
+                <!-- Quick Filters -->
+                <div class="quick-filters">
+                    <span class="quick-label">Buscas rápidas:</span>
+                    <button class="chip" onclick="quickSearch('COVID')">COVID-19</button>
+                    <button class="chip" onclick="quickSearch('educação')">Educação</button>
+                    <button class="chip" onclick="quickSearch('orçamento')">Orçamento</button>
+                    <button class="chip" onclick="quickSearch('eleições')">Eleições</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Main Content -->
+        <main class="main">
+            <!-- Filters Sidebar -->
+            <aside class="filters-sidebar" id="filtersSidebar">
+                <div class="filters-header">
+                    <h3>Filtros</h3>
+                    <button id="clearFilters" class="btn-text">Limpar</button>
+                </div>
+
+                <!-- Filter: Tipo -->
+                <div class="filter-group">
+                    <label class="filter-label">Tipo</label>
+                    <div class="filter-options">
+                        <label class="checkbox">
+                            <input type="checkbox" name="tipo" value="portal" checked>
+                            <span class="checkmark"></span>
+                            <span class="label-text">Portais</span>
+                            <span class="count" id="countPortais">0</span>
+                        </label>
+                        <label class="checkbox">
+                            <input type="checkbox" name="tipo" value="dataset" checked>
+                            <span class="checkmark"></span>
+                            <span class="label-text">Datasets</span>
+                            <span class="count" id="countDatasets">0</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Filter: Qualidade -->
+                <div class="filter-group">
+                    <label class="filter-label">Qualidade</label>
+                    <div class="filter-options">
+                        <label class="checkbox">
+                            <input type="checkbox" name="qualidade" value="Alta" checked>
+                            <span class="checkmark check-alta"></span>
+                            <span class="label-text">Alta</span>
+                        </label>
+                        <label class="checkbox">
+                            <input type="checkbox" name="qualidade" value="Media" checked>
+                            <span class="checkmark check-media"></span>
+                            <span class="label-text">Média</span>
+                        </label>
+                        <label class="checkbox">
+                            <input type="checkbox" name="qualidade" value="Baixa" checked>
+                            <span class="checkmark check-baixa"></span>
+                            <span class="label-text">Baixa</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Filter: Formato -->
+                <div class="filter-group">
+                    <label class="filter-label">Formato</label>
+                    <div class="filter-options">
+                        <label class="checkbox">
+                            <input type="checkbox" name="formato" value="CSV" checked>
+                            <span class="checkmark"></span>
+                            <span class="label-text">CSV</span>
+                        </label>
+                        <label class="checkbox">
+                            <input type="checkbox" name="formato" value="JSON" checked>
+                            <span class="checkmark"></span>
+                            <span class="label-text">JSON</span>
+                        </label>
+                        <label class="checkbox">
+                            <input type="checkbox" name="formato" value="API" checked>
+                            <span class="checkmark"></span>
+                            <span class="label-text">API</span>
+                        </label>
+                        <label class="checkbox">
+                            <input type="checkbox" name="formato" value="XLS" checked>
+                            <span class="checkmark"></span>
+                            <span class="label-text">XLS/PDF</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Filter: Score -->
+                <div class="filter-group">
+                    <label class="filter-label">Score mínimo: <span id="scoreValue">0</span></label>
+                    <input type="range" id="scoreRange" min="0" max="100" value="0" class="range-slider">
+                </div>
+            </aside>
+
+            <!-- Results Area -->
+            <div class="results-area">
+                <!-- Stats Bar -->
+                <div class="stats-bar" id="statsBar" style="display: none;">
+                    <div class="stats-left">
+                        <span class="stats-count" id="resultsCount">0</span> resultados
+                    </div>
+                    <div class="stats-right">
+                        <select id="sortBy" class="select-sort">
+                            <option value="score">Ordenar por: Relevância</option>
+                            <option value="qualidade">Ordenar por: Qualidade</option>
+                            <option value="nome">Ordenar por: Nome</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Loading -->
+                <div class="loading-state" id="loadingState">
+                    <div class="spinner-large"></div>
+                    <p>Buscando dados...</p>
+                </div>
+
+                <!-- Empty State -->
+                <div class="empty-state" id="emptyState">
+                    <div class="empty-icon">🔍</div>
+                    <h3>Comece sua busca</h3>
+                    <p>Digite um termo acima para encontrar portais e datasets públicos</p>
+                </div>
+
+                <!-- No Results -->
+                <div class="no-results" id="noResults" style="display: none;">
+                    <div class="no-results-icon">😕</div>
+                    <h3>Nenhum resultado encontrado</h3>
+                    <p>Tente termos diferentes ou ajuste os filtros</p>
+                    <button class="btn btn-secondary" onclick="clearAll()">Limpar filtros</button>
+                </div>
+
+                <!-- Results Grid -->
+                <div class="results-grid" id="resultsGrid"></div>
+            </div>
+        </main>
+
+        <!-- Modal Preview -->
+        <div class="modal" id="previewModal">
+            <div class="modal-content">
+                <button class="modal-close" onclick="closePreview()">×</button>
+                <div id="previewContent"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>

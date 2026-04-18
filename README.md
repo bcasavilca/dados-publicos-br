@@ -1,137 +1,154 @@
-# 🔍 Dados Públicos BR v3.0
+# 📊 Dados Públicos BR v3.0 - Search Engine Real
 
-**Motor de busca de dados públicos brasileiros** - Já em produção!
+**Motor de busca de dados públicos brasileiros** - Portais locais + Dados.gov.br
 
-🌐 **Acesse agora:** https://dados-publicos-br.vercel.app  
+🌐 **Live Demo:** https://dados-publicos-br.vercel.app  
 📡 **API:** https://dados-publicos-br.onrender.com
 
 ---
 
-## 📌 Status do Projeto (19/04/2025)
+## ✨ O que é?
 
-### ✅ Já Funcionando
+Um **"Google dos dados públicos brasileiros"** que une:
+- 🏛️ **30+ portais** de transparência municipais/estaduais
+- 📊 **Datasets do dados.gov.br** (API federal em tempo real)
+- 🔍 Busca unificada com ranking por relevância
 
-| Feature | Status | Detalhes |
-|---------|--------|----------|
-| **Frontend** | 🟢 Online | Design tipo Google Dataset Search |
-| **Backend** | 🟢 Online | API REST com busca em tempo real |
-| **Buscador** | 🟢 Funcionando | Busca por texto em todos os portais |
-| **Filtros** | 🟢 Funcionando | Por tipo, qualidade, formato, score |
-| **Score** | 🟢 Visual | Barra de 0-100 em cada resultado |
-| **Preview** | 🟢 Modal | Clique em cards para ver detalhes |
-| **Analytics** | 🟢 Console | Tracking de buscas e cliques |
+---
+
+## 🎯 Características v3.0
+
+### Backend (API Híbrida)
+- ✅ **Busca unificada**: Portais locais + Dados.gov.br
+- ✅ **Ranking inteligente**: Score 0-100 por relevância
+- ✅ **Dados em tempo real**: Integração CKAN dados.gov.br
+- ✅ **CORS habilitado**: Para frontend Vercel
+- ✅ **Healthcheck**: /health para monitoramento
+
+### Frontend v2
+- ✅ Design tipo Google Dataset Search
+- ✅ Cards ricos com score visual
+- ✅ Filtros por tipo, qualidade, formato
+- ✅ Preview de detalhes
+- ✅ Mobile-first
 
 ---
 
 ## 📊 Dados Disponíveis
 
-### Portais Locais
-- **40+ portais** catalogados
-- **9 estados** do Nordeste
-- **Capitais:** Fortaleza, Natal, Recife, Salvador, São Luís, Teresina, Aracaju, João Pessoa, Maceió
-- **Cidades médias:** Sobral, Mossoró, Campina Grande, Caruaru, Feira de Santana, Imperatriz, etc.
-- **Fontes:** Dados Abertos + Transparência + TCMs
-
-### Dados.gov.br (Em desenvolvimento)
-- Integração via API CKAN
-- Busca em tempo real de datasets federais
-- Score de relevância
+| Fonte | Quantidade | Tipo |
+|-------|-----------|------|
+| Portais Locais | 31 | CSV/JSON/API |
+| Dados.gov.br | ∞ (API) | Datasets federais |
+| **Total** | **31+** | **Misto** |
 
 ---
 
-## 🚀 O Que Já Conseguimos
+## 🚀 URLs de Produção
 
-### 1. Busca Funcional
+### Frontend (Vercel)
 ```
-Buscar: "natal"
-→ Retorna: Portal da Transparência de Natal, Dados Abertos de Natal, TCM-RN, etc.
+https://dados-publicos-br.vercel.app
 ```
 
-### 2. Filtros Reais
-- ✅ Por tipo (Portal/Dataset)
-- ✅ Por qualidade (Alta/Média/Baixa)
-- ✅ Por formato (CSV/JSON/API)
-- ✅ Por score mínimo (0-100)
-
-### 3. Cards Informativos
-Cada resultado mostra:
-- 📍 Localização (UF/Cidade)
-- 📄 Formato disponível
-- ⭐ Score de relevância
-- 🔗 Link direto para o portal
-- 🏷️ Qualidade da fonte
-
-### 4. Deploy Completo
-- ✅ Frontend no Vercel (CDN global)
-- ✅ Backend no Render (API REST)
-- ✅ Domínio próprio configurado
-- ✅ CORS habilitado
-- ✅ SSL/HTTPS em todos os serviços
-
----
-
-## 🛠️ Arquitetura Técnica
-
+### API (Render)
 ```
-Frontend (Vercel)
-    ↓ HTTP
-Backend (Render)
-    ↓ CSV Local + API dados.gov.br
-Dados
+https://dados-publicos-br.onrender.com
 ```
 
-**Tecnologias:**
-- Frontend: HTML/CSS/JS vanilla
-- Backend: Python + Flask
-- Deploy: Vercel + Render
-- Versionamento: Git + GitHub
+### Endpoints
+```
+GET /buscar?q=termo          # Busca híbrida
+GET /datasets?q=termo        # Apenas dados.gov.br
+GET /catalogo                # Portais locais
+GET /health                  # Status
+```
 
 ---
 
-## 📈 Próximos Passos (Roadmap)
+## 📡 Exemplo de Uso
 
-### Fase 3 (Em andamento)
-- [ ] Integração completa dados.gov.br
-- [ ] Cache de resultados
-- [ ] Preview de datasets
-
-### Fase 4 (Futuro)
-- [ ] Indexação em SQLite (busca mais rápida)
-- [ ] Ranking inteligente (TF-IDF)
-- [ ] Analytics de uso real
-- [ ] Expansão para Sudeste/Sul/Norte
-
----
-
-## 👤 Sobre
-
-Criado por: **Bruno Casavilca** (@bcasavilca)  
-Data de início: Abril/2025  
-Status: **🟢 Online e evoluindo**
-
----
-
-## 🤝 Como Usar
-
-### Web
-1. Acesse: https://dados-publicos-br.vercel.app
-2. Digite um termo (ex: "ce", "natal", "saude")
-3. Explore os resultados
-4. Clique em "Acessar" para ir ao portal
-
-### API
+### Buscar por "saude"
 ```bash
-# Buscar portais
-GET https://dados-publicos-br.onrender.com/buscar?q=ce
+curl "https://dados-publicos-br.onrender.com/buscar?q=saude"
+```
 
-# Ver status
-GET https://dados-publicos-br.onrender.com/health
+**Resposta:**
+```json
+{
+  "busca": "saude",
+  "total_resultados": 15,
+  "total_portais": 3,
+  "total_datasets": 12,
+  "resultados": [
+    {"tipo": "dataset", "titulo": "Vacinacao COVID-19", "score": 87},
+    {"tipo": "portal", "titulo": "Fortaleza Dados Abertos", "score": 50}
+  ]
+}
 ```
 
 ---
 
-**Última atualização:** 19/04/2025  
-**Versão:** v3.0  
-**Status:** 🟢 Produção ativa
+## 🗂️ Estrutura do Projeto
+
+```
+dados-publicos-br/
+├── 📊 data/
+│   └── catalogos.csv              # 31 portais locais
+├── 🐍 scripts/
+│   ├── api_hibrida.py           # API v3.0 (produção)
+│   ├── dadosgov_crawler.py      # Crawler dados.gov.br
+│   └── api_simple.py            # Fallback simples
+├── 🎨 frontend/
+│   └── v2/                      # Buscador moderno
+│       ├── index.html
+│       ├── style.css
+│       └── app.js
+├── requirements.txt             # Python deps
+├── Procfile                     # Render config
+└── runtime.txt                  # Python 3.11
+```
+
+---
+
+## 🚀 Deploy
+
+### Backend (Render)
+1. Conecte repo em [render.com](https://render.com)
+2. Procfile detectado automaticamente
+3. Deploy!
+
+### Frontend (Vercel)
+```bash
+cd frontend/v2
+npx vercel
+```
+
+---
+
+## 📝 Changelog
+
+### v3.0 (Atual)
+- ✅ Integração dados.gov.br em tempo real
+- ✅ Busca híbrida (portais + datasets)
+- ✅ Score de relevância
+- ✅ Deploy produção
+
+### v2.0
+- ✅ Frontend moderno
+- ✅ Filtros funcionais
+- ✅ Cards responsivos
+
+### v1.0
+- ✅ Catálogo de portais
+- ✅ Busca básica
+
+---
+
+## 👤 Autor
+
+Criado por [@bcasavilca](https://github.com/bcasavilca)
+
+**Status:** 🟢 Online | v3.0 | Produção
 
 ⭐ Star no repo se for útil!

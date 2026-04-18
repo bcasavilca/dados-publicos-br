@@ -1,0 +1,13 @@
+{
+  "name": "dados-publicos-br-frontend",
+  "version": "1.0.0",
+  "description": "Frontend do buscador de dados publicos brasileiros",
+  "scripts": {
+    "dev": "npx serve frontend",
+    "build": "echo 'Static site - no build needed'",
+    "start": "npx serve frontend"
+  },
+  "devDependencies": {
+    "serve": "^14.2.1"
+  }
+}

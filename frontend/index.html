@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dados Públicos BR - Buscador</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="logo">
+                <span class="logo-icon">📊</span>
+                <h1>Dados Públicos BR</h1>
+            </div>
+            <p class="subtitle">Busque portais de dados e transparência de todo o Brasil</p>
+        </header>
+
+        <!-- Search -->
+        <section class="search-section">
+            <div class="search-box">
+                <input 
+                    type="text" 
+                    id="searchInput" 
+                    placeholder="Buscar por estado, cidade, tema... (ex: 'saude', 'CE', 'transparencia')"
+                    autocomplete="off"
+                >
+                <button id="searchBtn" onclick="buscar()">
+                    <span>🔍</span>
+                    Buscar
+                </button>
+            </div>
+            
+            <!-- Filters -->
+            <div class="filters">
+                <div class="filter-group">
+                    <label>Qualidade:</label>
+                    <select id="filterQualidade" onchange="filtrar()">
+                        <option value="">Todas</option>
+                        <option value="Alta">Alta (API/CSV)</option>
+                        <option value="Media">Média</option>
+                        <option value="Baixa">Baixa (Scraping)</option>
+                    </select>
+                </div>
+                
+                <div class="filter-group">
+                    <label>Categoria:</label>
+                    <select id="filterCategoria" onchange="filtrar()">
+                        <option value="">Todas</option>
+                        <option value="Financas">Finanças</option>
+                        <option value="Saude">Saúde</option>
+                        <option value="Educacao">Educação</option>
+                        <option value="Geral">Geral</option>
+                        <option value="Legislativo">Legislativo</option>
+                    </select>
+                </div>
+                
+                <div class="filter-group">
+                    <label>Esfera:</label>
+                    <select id="filterEsfera" onchange="filtrar()">
+                        <option value="">Todas</option>
+                        <option value="Federal">Federal</option>
+                        <option value="Estadual">Estadual</option>
+                        <option value="Municipal">Municipal</option>
+                        <option value="Distrital">Distrital</option>
+                    </select>
+                </div>
+            </div>
+        </section>
+
+        <!-- Stats -->
+        <section class="stats" id="stats">
+            <div class="stat-card">
+                <span class="stat-number" id="statTotal">0</span>
+                <span class="stat-label">Portais</span>
+            </div>
+            <div class="stat-card">
+                <span class="stat-number" id="statUFs">0</span>
+                <span class="stat-label">Estados</span>
+            </div>
+            <div class="stat-card">
+                <span class="stat-number" id="statAlta">0</span>
+                <span class="stat-label">Alta Qualidade</span>
+            </div>
+        </section>
+
+        <!-- Results -->
+        <section class="results" id="results">
+            <div class="loading" id="loading">
+                <div class="spinner"></div>
+                <p>Carregando dados...</p>
+            </div>
+            <div class="no-results" id="noResults" style="display: none;">
+                <span class="icon">🔍</span>
+                <p>Nenhum resultado encontrado</p>
+            </div>
+            <div class="grid" id="resultsGrid"></div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p>🔥 API aberta - <a href="#" onclick="mostrarAPI()">Documentação</a> | <a href="https://github.com/bcasavilca/dados-publicos-br" target="_blank">GitHub</a></p>
+            <p class="small">Dados públicos brasileiros - Open Source</p>
+        </footer>
+    </div>
+
+    <!-- API Modal -->
+    <div class="modal" id="apiModal">
+        <div class="modal-content">
+            <span class="close" onclick="fecharAPI()">&times;</span>
+            <h3>📡 API Endpoints</h3>
+            <div class="endpoint">
+                <code>GET /catalogo</code>
+                <span>Lista todos os portais</span>
+            </div>
+            <div class="endpoint">
+                <code>GET /buscar?q=termo</code>
+                <span>Busca tipo Google</span>
+            </div>
+            <div class="endpoint">
+                <code>GET /ranking</code>
+                <span>Ranking por qualidade</span>
+            </div>
+            <div class="endpoint">
+                <code>GET /estatisticas</code>
+                <span>Dados agregados</span>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>

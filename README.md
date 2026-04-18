@@ -1,56 +1,63 @@
-# 📊 Dados Públicos BR v3.0 - Search Engine Real
+# 🔍 Dados Públicos BR v3.1
 
-**Motor de busca e inteligência de dados públicos brasileiros**
+**Motor de busca de dados públicos brasileiros** - 86 portais catalogados!
 
-🌐 **Live:** https://dados-publicos-br.vercel.app  
+🌐 **Acesse:** https://dados-publicos-br.vercel.app  
 📡 **API:** https://dados-publicos-br.onrender.com
 
 ---
 
-## ✅ Status Atual (19/04/2025)
+## 📊 Cobertura Nacional (86 Portais)
 
-### 🟢 Online e Funcionando
-
-| Componente | URL | Status |
-|------------|-----|--------|
-| Frontend | Vercel | ✅ Online |
-| API Busca | /buscar | ✅ Funcionando |
-| API Inteligência | /anomalias | ✅ Online |
-| Monitoramento | /status | ✅ Online |
-
----
-
-## 🎯 Fases Implementadas
-
-### ✅ Passo 1: Monitoramento
-- Uptime de portais
-- Latência
-- Score de confiabilidade
-
-### ✅ Passo 2: Normalização + Inteligência
-- Eventos financeiros padronizados
-- Detecção de anomalias
-- Análise de fornecedores
+| Região | Portais | Principais Estados |
+|--------|---------|-------------------|
+| 🌵 **Nordeste** | 45+ | CE, RN, PB, PE, BA, SE, MA, PI, AL |
+| 🏙️ **Sudeste** | 15+ | SP, MG, RJ |
+| 🌲 **Sul** | 10+ | PR, SC, RS |
+| ⭐ **Centro-Oeste** | 8+ | GO, MT, MS, DF |
+| 🌳 **Norte** | 8+ | PA, AM, AC, RO, RR, AP, TO |
 
 ---
 
-## 📡 Endpoints da API
+## 🎯 Funcionalidades
+
+### ✅ Busca Híbrida
+- Portais de transparência municipais/estaduais
+- Dados Abertos (CSV, JSON, API)
+- Score de relevância (0-100)
+
+### ✅ Modo Exploração
+- Navegação por estado
+- Filtros por categoria
+- Ranking de qualidade
+
+### ✅ API de Inteligência
+- `/buscar?q=termo` - Busca em portais
+- `/anomalias` - Detecção de padrões
+- `/eventos` - Dados normalizados
+- `/fornecedores` - Análise de fornecedores
+
+---
+
+## 📡 Endpoints
 
 ```
-GET /                     # Info do sistema
-GET /anomalias            # Anomalias detectadas
-GET /eventos?q=termo      # Eventos financeiros
-GET /fornecedores         # Análise de fornecedores
-GET /status               # Status de monitoramento
+GET /buscar?q=saude           # Busca por termo
+GET /anomalias                # Anomalias detectadas
+GET /eventos?q=termo          # Eventos financeiros
+GET /fornecedores             # Análise de fornecedores
+GET /catalogo                 # Lista todos os portais
+GET /health                   # Status da API
 ```
 
 ---
 
-## 🚀 Próximo Passo (Passo 3)
+## 🛠️ Tecnologia
 
-- Dashboard visual de anomalias
-- Alertas automáticos
-- Exportação de relatórios
+- **Frontend:** HTML/CSS/JS vanilla (Vercel)
+- **Backend:** Python + Flask (Render)
+- **Dados:** CSV (86 portais catalogados)
+- **Deploy:** Git + GitHub
 
 ---
 
@@ -58,4 +65,8 @@ GET /status               # Status de monitoramento
 
 **Bruno Casavilca** (@bcasavilca)
 
-**Status:** 🟢 Produção | v3.0 | Passo 2 de 3
+**Status:** 🟢 Online | v3.1 | 86 portais | Cobertura nacional
+
+---
+
+⭐ Star no repo se for útil!

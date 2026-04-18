@@ -128,10 +128,25 @@ async function handleSearch() {
     elements.noResults.style.display = 'none';
     elements.resultsGrid.innerHTML = '';
     elements.loadingState.style.display = 'block';
+    elements.loadingState.innerHTML = `
+        <div class="spinner-large"></div>
+        <p>Buscando dados...</p>
+        <p style="font-size: 0.875rem; color: var(--gray-400); margin-top: var(--space-2);"
+            >Primeira busca pode levar 10-15s (servidor acordando)</p>
+    `;
     elements.statsBar.style.display = 'none';
     
+    // Timeout de 30 segundos
+    const timeoutPromise = new Promise((_, reject) => 
+        setTimeout(() => reject(new Error('Timeout')), 30000)
+    );
+    
     try {
-        const response = await fetch(`${API_URL}/buscar?q=${encodeURIComponent(term)}`);
+        const fetchPromise = fetch(`${API_URL}/buscar?q=${encodeURIComponent(term)}`);
+        const response = await Promise.race([fetchPromise, timeoutPromise]);
+        
+        if (!response.ok) throw new Error('HTTP ' + response.status);
+        
         const data = await response.json();
         
         state.results = data.resultados || [];
@@ -155,6 +170,17 @@ async function handleSearch() {
         state.loading = false;
         elements.loadingState.style.display = 'none';
         elements.noResults.style.display = 'block';
+        elements.noResults.innerHTML = `
+            <div class="no-results-icon">😕</div>
+            <h3>Erro na conexão</h3>
+            <p>O servidor pode estar iniciando. Aguarde 10-15s e tente novamente.</p>
+            <p style="font-size: 0.75rem; color: var(--gray-400); margin-top: var(--space-2);">
+                Erro: ${error.message}
+            </p>
+            <button class="btn btn-secondary" onclick="handleSearch()" style="margin-top: var(--space-4);">
+                Tentar novamente
+            </button>
+        `;
     }
 }
 

@@ -1,0 +1,8 @@
+Titulo,URL,Municipio,UF,Esfera,Poder,TipoFonte,TipoAcesso,Formato,Qualidade,Atualizacao
+Alagoas em Dados e Informacoes,http://dados.al.gov.br/,,AL,Estadual,Executivo,DadosAbertos,API/Download,CSV/JSON,Alta,Frequente
+Fortaleza Dados Abertos,http://dados.fortaleza.ce.gov.br/,Fortaleza,CE,Municipal,Executivo,DadosAbertos,API/Download,CSV/JSON,Alta,Frequente
+Dados Abertos TCM-CE,http://api.tcm.ce.gov.br/,,CE,Estadual,Legislativo,API,API,JSON,Alta,Frequente
+Portal da Transparencia Camara Municipal de Natal,https://www.cmnat.rn.gov.br/portal-da-transparencia,Natal,RN,Municipal,Legislativo,Transparencia,Scraping,HTML/XLS/PDF,Baixa,Irregular
+Transparencia Fortaleza 2023,https://transparencia.fortaleza.ce.gov.br/,Fortaleza,CE,Municipal,Executivo,Transparencia,Scraping,CSV,Baixa,Anual
+Recife Dados Abertos,http://dados.recife.pe.gov.br/,Recife,PE,Municipal,Executivo,DadosAbertos,API/Download,CSV/JSON,Alta,Frequente
+TCM-PI Dados Abertos,http://www.tcm.pi.gov.br/,,PI,Estadual,Legislativo,API,API,JSON,Media,Trimestral

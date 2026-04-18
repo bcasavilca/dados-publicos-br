@@ -1,1 +1,1 @@
-web: cd scripts && python api_monitor.py
+web: cd scripts && python api_inteligencia.py

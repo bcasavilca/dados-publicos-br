@@ -4,6 +4,7 @@
 API REST para consulta ao catalogo de dados publicos brasileiros v2.1
 - Com cache, healthcheck e métricas
 - Deploy ready para Render/Railway
+- INTEGRACAO com dados.gov.br
 
 Endpoints:
   - /                  Info da API
@@ -13,11 +14,11 @@ Endpoints:
   - /catalogo/{uf}     Filtra por UF
   - /catalogo/qualidade/{nivel}  Filtra por qualidade
   - /catalogo/categoria/{cat}    Filtra por categoria
-  - /buscar?q={termo}  Busca tipo Google
+  - /buscar?q={termo}  Busca tipo Google (HIBRIDA: portais + datasets)
+  - /datasets?q={termo}  Busca datasets reais no dados.gov.br
   - /ranking           Ranking por qualidade
   - /estatisticas      Estatisticas gerais
   - /estados           Lista estados disponiveis
-  - /datasets          (TODO) Datasets reais do dados.gov.br
 """
 
 from flask import Flask, jsonify, request
@@ -27,6 +28,11 @@ import pandas as pd
 import os
 import time
 from datetime import datetime
+import sys
+
+# Adicionar path para importar modulo de integracao
+sys.path.append(os.path.dirname(__file__))
+from dadosgov_integration import DadosGovClient, search_hibrido
 
 app = Flask(__name__)
 
@@ -298,13 +304,69 @@ def estatisticas():
 @app.route('/datasets')
 def datasets():
     """
-    TODO: Integrar com dados.gov.br
-    Retornaria datasets reais, nao so portais
+    Busca datasets reais no dados.gov.br
     """
+    q = request.args.get('q', '')
+    rows = request.args.get('rows', 20, type=int)
+    
+    client = DadosGovClient()
+    
+    if q:
+        results = client.search_datasets(query=q, rows=rows)
+    else:
+        results = client.get_popular_datasets(rows=rows)
+    
     return jsonify({
-        'status': 'em_desenvolvimento',
-        'message': 'Integracao com dados.gov.br em andamento',
-        'documentacao': 'https://dados.gov.br/api/docs'
+        'termo': q,
+        'total': len(results),
+        'datasets': results
+    })
+
+@app.route('/buscar')
+def buscar():
+    """
+    BUSCA HIBRIDA: portais locais + datasets do dados.gov.br
+    """
+    q = request.args.get('q', '').lower()
+    
+    if not q or len(q) < 2:
+        return jsonify({
+            'erro': 'Termo de busca muito curto (min 2 caracteres)',
+            'busca': q
+        }), 400
+    
+    df = load_data()
+    
+    # Buscar em portais locais
+    mask = df.apply(
+        lambda row: any(q in str(val).lower() for val in row), 
+        axis=1
+    )
+    portais = df[mask].to_dict(orient='records')
+    
+    # Adicionar tipo aos portais
+    for portal in portais:
+        portal['tipo'] = 'portal'
+        portal['score'] = 50 if portal['Qualidade'] == 'Alta' else 30
+    
+    # Buscar datasets no dados.gov.br
+    try:
+        client = DadosGovClient()
+        datasets = client.search_datasets(query=q, rows=20)
+    except Exception as e:
+        print(f"Erro ao buscar datasets: {e}")
+        datasets = []
+    
+    # Combinar e ordenar por score
+    todos = portais + datasets
+    todos_ordenados = sorted(todos, key=lambda x: x.get('score', 0), reverse=True)
+    
+    return jsonify({
+        'busca': q,
+        'total_resultados': len(todos_ordenados),
+        'total_portais': len(portais),
+        'total_datasets': len(datasets),
+        'resultados': todos_ordenados
     })
 
 # Error handlers
@@ -318,6 +380,7 @@ def not_found(error):
             '/metrics',
             '/catalogo',
             '/buscar',
+            '/datasets',
             '/ranking',
             '/estatisticas'
         ]
@@ -345,9 +408,12 @@ if __name__ == '__main__':
     print("  http://localhost:5000/health")
     print("  http://localhost:5000/metrics")
     print("  http://localhost:5000/catalogo")
-    print("  http://localhost:5000/buscar?q=saude")
+    print("  http://localhost:5000/buscar?q=saude     # BUSCA HIBRIDA")
+    print("  http://localhost:5000/datasets?q=saude   # Datasets dados.gov.br")
     print("  http://localhost:5000/ranking")
     print("  http://localhost:5000/estatisticas")
+    print("=" * 80)
+    print("\nNOVO: Busca hibrida com datasets reais do dados.gov.br!")
     print("=" * 80)
     print("\nPressione CTRL+C para parar\n")
     

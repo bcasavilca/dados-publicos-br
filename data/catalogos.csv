@@ -3,6 +3,7 @@ Alagoas em Dados e Informacoes,http://dados.al.gov.br/,,AL,Estadual,Executivo,Da
 Maceio Dados Abertos,http://dados.maceio.al.gov.br/,Maceio,AL,Municipal,Executivo,DadosAbertos,API/Download,CSV/JSON,Alta,Frequente,Geral
 Fortaleza Dados Abertos,http://dados.fortaleza.ce.gov.br/,Fortaleza,CE,Municipal,Executivo,DadosAbertos,API/Download,CSV/JSON,Alta,Frequente,Geral
 Dados Abertos TCM-CE,http://api.tcm.ce.gov.br/,,CE,Estadual,Legislativo,API,API,JSON,Alta,Frequente,Financas
+Transparencia Legislativa AL-RN,https://transparencialegislativa.al.rn.leg.br/,,RN,Estadual,Legislativo,Transparencia,Scraping,HTML/PDF,Baixa,Mensal,Financas
 Transparencia Fortaleza,https://transparencia.fortaleza.ce.gov.br/,Fortaleza,CE,Municipal,Executivo,Transparencia,Scraping,CSV,Baixa,Anual,Financas
 Sobral Dados Abertos,http://dados.sobral.ce.gov.br/,Sobral,CE,Municipal,Executivo,DadosAbertos,Download,CSV/JSON,Media,Trimestral,Geral
 Caucaia Transparencia,https://caucaia.ce.gov.br/transparencia/,Caucaia,CE,Municipal,Executivo,Transparencia,Scraping,HTML/PDF,Baixa,Mensal,Financas

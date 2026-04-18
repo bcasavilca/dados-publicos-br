@@ -1,1 +1,1 @@
-web: cd scripts && python api_hibrida.py
+web: cd scripts && python api_monitor.py

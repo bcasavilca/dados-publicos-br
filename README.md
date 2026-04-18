@@ -1,219 +1,217 @@
-# 📊 Dados Publicos BR v2.0
+# 📊 Dados Públicos BR v2.2
 
-Catalogo unificado e motor de busca de dados publicos brasileiros.
+**Buscador de portais de dados públicos brasileiros** - API + Frontend moderno
 
-## 🎯 Objetivo
+🌐 **Live Demo:** [dados-publicos-br.vercel.app](https://dados-publicos-br.vercel.app) *(em breve)*  
+📡 **API:** [dados-publicos-br.onrender.com](https://dados-publicos-br.onrender.com) *(em breve)*
 
-Facilitar o acesso a dados publicos brasileiros atraves de:
-- **Catalogo centralizado** de portais (dados abertos + transparencia)
-- **API REST** para consulta programatica
-- **Motor de busca** tipo Google
-- **Ranking de qualidade** dos portais
-- **Validacao automatica** de links
+---
 
-## 📊 Estatisticas Atuais
+## ✨ O que é?
 
-- **30+ portais** catalogados
-- **26 estados/UFs** cobertos
-- **Nordeste completo** (AL, BA, CE, MA, PB, PE, PI, RN, SE)
-- **Sudeste parcial** (SP, MG, RJ)
-- **Sul** (RS, SC, PR)
-- **Centro-Oeste** (GO, DF)
+Um **"Google dos dados públicos brasileiros"** que cataloga:
+- Portais de dados abertos (CKAN, APIs)
+- Portais de transparência
+- Fontes que precisam de scraping
 
-## 📁 Estrutura
+---
+
+## 🎯 Características
+
+### Backend (API REST)
+- ✅ **30+ portais** catalogados
+- ✅ **26 estados** cobertos
+- ✅ Busca tipo Google (`/buscar?q=termo`)
+- ✅ Ranking por qualidade
+- ✅ Cache + healthcheck
+- ✅ Métricas em tempo real
+
+### Frontend (Buscador)
+- ✅ Design moderno (Inter font, glassmorphism)
+- ✅ Filtros por qualidade, categoria, esfera
+- ✅ Cards responsivos
+- ✅ Estatísticas visuais
+- ✅ Mobile-first
+
+---
+
+## 📊 Estatísticas
+
+| Métrica | Valor |
+|---------|-------|
+| Portais | 30+ |
+| Estados | 26 |
+| Alta Qualidade | 14 (47%) |
+| Nordeste | Completo (9 estados) |
+| Sudeste | 3 estados |
+| Sul | 3 estados |
+| Centro-Oeste | 2 estados |
+
+---
+
+## 🚀 Quick Start
+
+### Backend (API)
+
+```bash
+pip install -r requirements.txt
+python scripts/api.py
+
+# Acesse: http://localhost:5000
+```
+
+### Frontend (Buscador)
+
+```bash
+cd frontend
+npx serve
+
+# Acesse: http://localhost:3000
+```
+
+---
+
+## 📡 Endpoints da API
+
+### Busca
+```bash
+GET /buscar?q=saude          # Busca tipo Google
+GET /catalogo                  # Lista todos
+GET /ranking                   # Ranking qualidade
+GET /estatisticas              # Métricas
+```
+
+### Filtros
+```bash
+GET /catalogo/uf/CE
+GET /catalogo/qualidade/Alta
+GET /catalogo/categoria/Financas
+```
+
+### Observabilidade
+```bash
+GET /health                    # Healthcheck
+GET /metrics                   # Métricas
+```
+
+---
+
+## 🗂️ Estrutura
 
 ```
 dados-publicos-br/
 ├── 📊 data/
-│   └── catalogos.csv           # 30+ portais catalogados
+│   └── catalogos.csv            # 30+ portais
 ├── 🐍 scripts/
-│   ├── api.py                  # API REST completa
-│   ├── classify.py             # Classificacao automatica
-│   ├── detect_ckan.py          # Detector de portais CKAN
-│   ├── validate.py             # Validador de links
-│   └── scrapers/               # Scrapers especificos
-├── ⚙️ .github/workflows/
-│   └── validate.yml            # CI/CD
-└── 📘 README.md
+│   ├── api.py                   # API Flask v2.2
+│   ├── classify.py              # Classificador
+│   ├── detect_ckan.py           # Detector CKAN
+│   └── validate.py              # Validador links
+├── 🎨 frontend/
+│   ├── index.html               # Buscador
+│   ├── app.js                   # Lógica JS
+│   ├── style.css                # Design system
+│   └── package.json             # Vercel config
+├── ⚙️ .github/
+│   └── workflows/
+│       └── validate.yml         # CI/CD
+├── requirements.txt             # Python deps
+├── Procfile                     # Render config
+├── render.yaml                  # Deploy config
+└── README.md                    # Este arquivo
 ```
 
-## 🏷️ Classificacao de Qualidade
+---
 
-| Nivel | Descricao | Criterios |
-|-------|-----------|-----------|
-| **Alta** | API REST ou download direto | JSON/CSV, CKAN, API documentada |
-| **Media** | Download manual, formatos estruturados | XLS, ODS, API limitada |
-| **Baixa** | Scraping necessario ou PDFs | HTML, PDF, acesso restrito |
+## 🎨 Design System
 
-## 🚀 Como Usar
+### Cores Qualidade
+- **Alta:** Verde (#059669) - API/CSV
+- **Média:** Amarelo (#d97706) - Download
+- **Baixa:** Vermelho (#dc2626) - Scraping
 
-### 1. Instalar dependencias
+### Fonte
+- **Inter** (Google Fonts)
 
+---
+
+## 🚀 Deploy
+
+### Backend (Render)
+1. Conecte repo em [render.com](https://render.com)
+2. Configuração automática (`render.yaml`)
+3. Deploy!
+
+### Frontend (Vercel)
 ```bash
-pip install flask pandas requests
+cd frontend
+npx vercel
 ```
 
-### 2. Rodar API local
+Ou use Netlify/GitHub Pages.
 
-```bash
-python scripts/api.py
-```
-
-### 3. Testar endpoints
-
-```bash
-# Lista todos os portais
-curl http://localhost:5000/catalogo
-
-# Busca tipo Google
-curl "http://localhost:5000/buscar?q=saude"
-
-# Melhores portais
-curl http://localhost:5000/ranking
-
-# Filtra por estado
-curl http://localhost:5000/catalogo/uf/CE
-
-# Estatisticas
-curl http://localhost:5000/estatisticas
-```
-
-## 📡 Endpoints da API
-
-### Consulta
-
-| Endpoint | Descricao | Exemplo |
-|----------|-----------|---------|
-| `GET /` | Info da API | - |
-| `GET /catalogo` | Lista todos | `/catalogo?uf=CE&qualidade=Alta` |
-| `GET /catalogo/uf/{uf}` | Por estado | `/catalogo/uf/SP` |
-| `GET /catalogo/qualidade/{nivel}` | Por qualidade | `/catalogo/qualidade/Alta` |
-| `GET /catalogo/categoria/{cat}` | Por categoria | `/catalogo/categoria/Financas` |
-
-### Busca & Analytics
-
-| Endpoint | Descricao | Exemplo |
-|----------|-----------|---------|
-| `GET /buscar?q={termo}` | Busca livre | `/buscar?q=transparencia` |
-| `GET /ranking` | Ranking por qualidade | - |
-| `GET /estatisticas` | Dados agregados | - |
-| `GET /estados` | Lista estados | - |
-
-## 📊 Exemplos de Resposta
-
-### Buscar
-
-```json
-{
-  "busca": "saude",
-  "total_resultados": 3,
-  "resultados": [
-    {
-      "Titulo": "Portal da Transparencia Salvador",
-      "UF": "BA",
-      "Categoria": "Saude"
-    }
-  ]
-}
-```
-
-### Ranking
-
-```json
-{
-  "total_portais": 30,
-  "ranking": {
-    "alta": [...],
-    "media": [...], 
-    "baixa": [...]
-  }
-}
-```
-
-## 🤖 Automacao
-
-### Detector CKAN
-
-```bash
-python scripts/detect_ckan.py
-```
-
-Detecta automaticamente portais que usam plataforma CKAN.
-
-### Validador de Links
-
-```bash
-python scripts/validate.py
-```
-
-Verifica se todos os portais estao respondendo.
-
-### GitHub Actions
-
-Validacao automatica toda segunda-feira 9h.
+---
 
 ## 📝 Contribuindo
 
-Para adicionar novo portal, edite `data/catalogos.csv`:
+Para adicionar portal, edite `data/catalogos.csv`:
 
 ```csv
 Titulo,URL,Municipio,UF,Esfera,Poder,TipoFonte,TipoAcesso,Formato,Qualidade,Atualizacao,Categoria
 ```
 
-**Categorias disponiveis:** Geral, Financas, Saude, Educacao, Transporte, Legislativo
-
-## 🗺️ Cobertura Geografica
-
-### Nordeste (Completo)
-- ✅ Alagoas, Bahia, Ceara, Maranhao, Paraiba, Pernambuco, Piaui, Rio Grande do Norte, Sergipe
-
-### Sudeste (Parcial)
-- ✅ Sao Paulo (capital + estado)
-- ✅ Minas Gerais (capital + estado)
-- ✅ Rio de Janeiro (capital + estado)
-
-### Sul
-- ✅ Rio Grande do Sul
-- ✅ Santa Catarina
-- ✅ Parana
-
-### Centro-Oeste
-- ✅ Distrito Federal
-- ✅ Goias
-
-## 🎯 Proximos Passos
-
-- [ ] Adicionar estados faltantes (AC, AM, AP, MS, MT, PA, RO, RR, TO)
-- [ ] Criar scrapers automatizados
-- [ ] Painel web (dashboard)
-- [ ] Deploy em servidor (Render/Railway)
-- [ ] Cache de respostas
-- [ ] Rate limiting
-
-## 🔥 Deploy
-
-Para deploy em producao (Render/Railway):
-
-```bash
-# requirements.txt
-flask==3.0.0
-pandas==2.1.4
-requests==2.31.0
-
-# Procfile
-web: python scripts/api.py
-```
-
-## 📜 Licenca
-
-Dados publicos - Uso livre para fins jornalisticos, academicos e civic tech.
-
-## 👤 Autor
-
-Criado por @bcasavilca | Open Source | v2.0
+**Categorias:** Geral, Financas, Saude, Educacao, Transporte, Legislativo
 
 ---
 
-**Status:** 🟢 Production Ready | 30+ portais | API v2.0 ativa
+## 🗺️ Cobertura
 
-**Deploy:** [Seu-URL-aqui.com] (em breve)
+```
+✅ Nordeste: AL, BA, CE, MA, PB, PE, PI, RN, SE
+✅ Sudeste: SP, MG, RJ
+✅ Sul: RS, SC, PR
+✅ Centro-Oeste: GO, DF
+❌ Norte: (em breve)
+❌ Médio-Oeste: MS, MT (em breve)
+```
+
+---
+
+## 🔮 Roadmap
+
+- [ ] Adicionar Norte e Centro-Oeste
+- [ ] Integrar datasets reais (dados.gov.br)
+- [ ] Autocomplete na busca
+- [ ] Dashboard com gráficos
+- [ ] Scrapers automatizados
+- [ ] Cache distribuído (Redis)
+
+---
+
+## 💡 Uso
+
+### Exemplo: Buscar todos os portais de saúde
+
+```javascript
+fetch('https://api.dadospublicosbr.com/buscar?q=saude')
+  .then(r => r.json())
+  .then(data => console.log(data.resultados))
+```
+
+---
+
+## 📜 Licença
+
+Dados públicos - Uso livre para fins jornalísticos, acadêmicos e civic tech.
+
+---
+
+## 👤 Autor
+
+Criado por [@bcasavilca](https://github.com/bcasavilca) | Open Source | v2.2
+
+---
+
+**Status:** 🟢 Production Ready | API v2.2 | Frontend v1.0
+
+⭐ Star no repo se for útil!

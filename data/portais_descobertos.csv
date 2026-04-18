@@ -1,0 +1,28 @@
+nome,tipo,esfera,uf,municipio,portal_transparencia,dados_abertos,api,status_transparencia,status_dados,descoberto_em
+Governo do Rio Grande do Norte,governo_estadual,estadual,RN,,,,,nao_verificado,nao_verificado,2026-04-19T01:14:34.247159
+Governo do Pernambuco,governo_estadual,estadual,PE,,,,,nao_verificado,nao_verificado,2026-04-19T01:14:43.154371
+Governo do Paraíba,governo_estadual,estadual,PB,,,,,nao_verificado,nao_verificado,2026-04-19T01:14:34.247159
+Governo do Ceará,governo_estadual,estadual,CE,,,,,nao_verificado,nao_verificado,2026-04-19T01:14:34.247159
+Governo do Bahia,governo_estadual,estadual,BA,,,,,nao_verificado,nao_verificado,2026-04-19T01:14:51.699160
+Governo do Sergipe,governo_estadual,estadual,SE,,,,,nao_verificado,nao_verificado,2026-04-19T01:14:51.909002
+Governo do Alagoas,governo_estadual,estadual,AL,,,,,nao_verificado,nao_verificado,2026-04-19T01:15:00.529388
+Governo do Maranhão,governo_estadual,estadual,MA,,,,,nao_verificado,nao_verificado,2026-04-19T01:14:51.973350
+Governo do Piauí,governo_estadual,estadual,PI,,,,,nao_verificado,nao_verificado,2026-04-19T01:15:00.285360
+Prefeitura de Fortaleza,prefeitura,municipal,CE,Fortaleza,,,,nao_verificado,nao_verificado,2026-04-19T01:15:09.261488
+Câmara Municipal de Fortaleza,camara,municipal,CE,Fortaleza,,,,nao_verificado,nao_verificado,2026-04-19T01:15:09.418963
+Prefeitura de Natal,prefeitura,municipal,RN,Natal,,,,nao_verificado,nao_verificado,2026-04-19T01:15:17.540578
+Câmara Municipal de Natal,camara,municipal,RN,Natal,,,,nao_verificado,nao_verificado,2026-04-19T01:15:27.563190
+Câmara Municipal de João Pessoa,camara,municipal,PB,João Pessoa,,,,nao_verificado,nao_verificado,2026-04-19T01:15:35.881589
+Prefeitura de Recife,prefeitura,municipal,PE,Recife,,,,nao_verificado,nao_verificado,2026-04-19T01:15:46.988238
+Prefeitura de João Pessoa,prefeitura,municipal,PB,João Pessoa,,,,nao_verificado,nao_verificado,2026-04-19T01:15:28.936727
+Câmara Municipal de Recife,camara,municipal,PE,Recife,,,,nao_verificado,nao_verificado,2026-04-19T01:15:55.184755
+Prefeitura de Salvador,prefeitura,municipal,BA,Salvador,,,,nao_verificado,nao_verificado,2026-04-19T01:16:05.505297
+Câmara Municipal de Salvador,camara,municipal,BA,Salvador,,,,nao_verificado,nao_verificado,2026-04-19T01:16:05.715189
+Prefeitura de Aracaju,prefeitura,municipal,SE,Aracaju,,,,nao_verificado,nao_verificado,2026-04-19T01:16:14.585966
+Câmara Municipal de Aracaju,camara,municipal,SE,Aracaju,,,,nao_verificado,nao_verificado,2026-04-19T01:16:23.804405
+Câmara Municipal de São Luís,camara,municipal,MA,São Luís,,,,nao_verificado,nao_verificado,2026-04-19T01:16:33.189909
+Prefeitura de Teresina,prefeitura,municipal,PI,Teresina,,,,nao_verificado,nao_verificado,2026-04-19T01:16:43.410031
+Prefeitura de São Luís,prefeitura,municipal,MA,São Luís,,,,nao_verificado,nao_verificado,2026-04-19T01:16:25.021448
+Câmara Municipal de Teresina,camara,municipal,PI,Teresina,,,,nao_verificado,nao_verificado,2026-04-19T01:16:52.488642
+Câmara Municipal de Maceió,camara,municipal,AL,Maceió,,,,nao_verificado,nao_verificado,2026-04-19T01:17:02.071793
+Prefeitura de Maceió,prefeitura,municipal,AL,Maceió,,,,nao_verificado,nao_verificado,2026-04-19T01:17:01.829500

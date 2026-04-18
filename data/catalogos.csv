@@ -55,8 +55,32 @@ Dados Abertos Santa Catarina,https://dados.sc.gov.br/,,SC,Estadual,Executivo,Dad
 Transparencia Florianopolis,https://transparencia.pmf.sc.gov.br/,Florianopolis,SC,Municipal,Executivo,Transparencia,Scraping,HTML/PDF,Baixa,Mensal,Financas
 Dados Abertos Parana,https://dados.pr.gov.br/,,PR,Estadual,Executivo,DadosAbertos,API/Download,CSV/JSON,Alta,Frequente,Geral
 Transparencia Curitiba,https://transparencia.curitiba.pr.gov.br/,Curitiba,PR,Municipal,Executivo,Transparencia,Scraping,HTML/PDF,Media,Mensal,Financas
+Transparencia Porto Alegre,https://transparencia.portoalegre.rs.gov.br/,Porto Alegre,RS,Municipal,Executivo,Transparencia,Scraping,HTML/PDF,Baixa,Mensal,Financas
+Dados Abertos Rio Grande do Sul,https://dados.rs.gov.br/,,RS,Estadual,Executivo,DadosAbertos,API/Download,CSV/JSON,Alta,Frequente,Geral
+Transparencia Belo Horizonte,https://transparencia.pbh.gov.br/,Belo Horizonte,MG,Municipal,Executivo,Transparencia,Scraping,HTML/PDF,Baixa,Mensal,Financas
+Dados Abertos Minas Gerais,https://dados.mg.gov.br/,,MG,Estadual,Executivo,DadosAbertos,API/Download,CSV/JSON,Alta,Frequente,Geral
+Dados Abertos Sao Paulo,https://dados.gov.br/,,SP,Estadual,Executivo,DadosAbertos,API/Download,CSV/JSON,Alta,Frequente,Geral
+Transparencia Sao Paulo,https://www.prefeitura.sp.gov.br/cidade/secretarias/fazenda/contas_publicas/index.php?p=3310,Sao Paulo,SP,Municipal,Executivo,Transparencia,Scraping,HTML/PDF,Baixa,Anual,Financas
 Dados Abertos Distrito Federal,https://www.dados.df.gov.br/,,DF,Distrital,Executivo,DadosAbertos,API/Download,CSV/JSON,Alta,Frequente,Geral
 Transparencia Rio de Janeiro,https://transparencia.rio/,Rio de Janeiro,RJ,Municipal,Executivo,Transparencia,Scraping,HTML/PDF,Baixa,Mensal,Financas
 Data Rio,https://data.rio/,Rio de Janeiro,RJ,Municipal,Executivo,DadosAbertos,API/Download,CSV/JSON,Alta,Frequente,Geral
+Transparencia Niteroi,https://transparencia.niteroi.rj.gov.br/,Niteroi,RJ,Municipal,Executivo,Transparencia,Scraping,HTML/PDF,Baixa,Mensal,Financas
 Dados Abertos Goias,https://dados.go.gov.br/,,GO,Estadual,Executivo,DadosAbertos,API/Download,CSV/JSON,Media,Trimestral,Geral
 Transparencia Goiania,https://transparencia.goiania.go.gov.br/,Goiania,GO,Municipal,Executivo,Transparencia,Scraping,HTML/PDF,Baixa,Mensal,Financas
+Transparencia Mato Grosso,https://www.transparencia.mt.gov.br/,,MT,Estadual,Executivo,Transparencia,Scraping,HTML/PDF,Baixa,Mensal,Financas
+Dados Abertos Mato Grosso do Sul,https://dados.ms.gov.br/,,MS,Estadual,Executivo,DadosAbertos,API/Download,CSV/JSON,Alta,Frequente,Geral
+Transparencia Cuiaba,https://transparencia.cuiaba.mt.gov.br/,Cuiaba,MT,Municipal,Executivo,Transparencia,Scraping,HTML/PDF,Baixa,Mensal,Financas
+Transparencia Campo Grande,https://transparencia.campogrande.ms.gov.br/,Campo Grande,MS,Municipal,Executivo,Transparencia,Scraping,HTML/PDF,Baixa,Mensal,Financas
+Transparencia Roraima,https://transparencia.rr.gov.br/,,RR,Estadual,Executivo,Transparencia,Scraping,HTML/PDF,Baixa,Mensal,Financas
+Transparencia Amapa,https://transparencia.ap.gov.br/,,AP,Estadual,Executivo,Transparencia,Scraping,HTML/PDF,Baixa,Mensal,Financas
+Dados Abertos Rondonia,https://dados.rondonia.ro.gov.br/,,RO,Estadual,Executivo,DadosAbertos,API/Download,CSV/JSON,Alta,Frequente,Geral
+Transparencia Porto Velho,https://transparencia.portovelho.ro.gov.br/,Porto Velho,RO,Municipal,Executivo,Transparencia,Scraping,HTML/PDF,Baixa,Mensal,Financas
+Transparencia Belem,https://transparencia.belem.pa.gov.br/,Belem,PA,Municipal,Executivo,Transparencia,Scraping,HTML/PDF,Baixa,Mensal,Financas
+Dados Abertos Para,https://dados.pa.gov.br/,,PA,Estadual,Executivo,DadosAbertos,API/Download,CSV/JSON,Alta,Frequente,Geral
+Transparencia Manaus,https://transparencia.manaus.am.gov.br/,Manaus,AM,Municipal,Executivo,Transparencia,Scraping,HTML/PDF,Baixa,Mensal,Financas
+Transparencia Rio Branco,https://transparencia.riobranco.ac.gov.br/,Rio Branco,AC,Municipal,Executivo,Transparencia,Scraping,HTML/PDF,Baixa,Mensal,Financas
+Dados Abertos Acre,https://dados.ac.gov.br/,,AC,Estadual,Executivo,DadosAbertos,API/Download,CSV/JSON,Alta,Frequente,Geral
+Transparencia Palmas,https://transparencia.palmas.to.gov.br/,Palmas,TO,Municipal,Executivo,Transparencia,Scraping,HTML/PDF,Baixa,Mensal,Financas
+Dados Abertos Tocantins,https://dados.to.gov.br/,,TO,Estadual,Executivo,DadosAbertos,API/Download,CSV/JSON,Alta,Frequente,Geral
+Transparencia Brasilia,https://transparencia.brasilia.df.gov.br/,Brasilia,DF,Distrital,Executivo,Transparencia,Scraping,HTML/PDF,Baixa,Mensal,Financas
+Dados Abertos Amazonas,https://dados.amazonas.am.gov.br/,,AM,Estadual,Executivo,DadosAbertos,API/Download,CSV/JSON,Alta,Frequente,Geral

@@ -3,8 +3,8 @@
  * Experiência tipo Google Dataset Search
  */
 
-// Configuração
-const API_URL = window.location.origin + '/api';
+// Configuração - API do Railway
+const API_URL = 'https://web-production-64ea5.up.railway.app';
 
 // Estado global
 let state = {

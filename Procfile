@@ -1,1 +1,1 @@
-web: cd scripts && python api_cerebro.py
+web: cd scripts && python api_integracoes.py

@@ -227,9 +227,26 @@ def buscar_dadosgov():
     
     try:
         # Buscar API dados.gov.br
-        url = f'https://dados.gov.br/api/3/search/datasets?q={termo}&rows={limite}'
-        resp = requests.get(url, timeout=30)
-        data = resp.json()
+        url = f'https://dados.gov.br/api/3/search/datasets'
+        params = {'q': termo, 'rows': limite}
+        headers = {'Accept': 'application/json'}
+        
+        resp = requests.get(url, params=params, headers=headers, timeout=30)
+        
+        # Verificar se retornou JSON
+        if resp.status_code != 200:
+            return jsonify({
+                'erro': f'API dados.gov.br retornou status {resp.status_code}',
+                'resposta': resp.text[:500]
+            }), 502
+        
+        try:
+            data = resp.json()
+        except:
+            return jsonify({
+                'erro': 'API dados.gov.br retornou HTML em vez de JSON',
+                'conteudo': resp.text[:500]
+            }), 502
         
         datasets = data.get('results', [])
         

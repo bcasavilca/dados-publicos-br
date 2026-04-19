@@ -47,9 +47,30 @@
             try {
                 const response = await fetch(`${API_URL}/search?q=${encodeURIComponent(termo)}`);
                 const data = await response.json();
-                statsDiv.textContent = `${data.total} resultados encontrados`;
-                if (data.total === 0) { resultsDiv.innerHTML = '<div class="empty">Nenhum resultado</div>'; return; }
-                resultsDiv.innerHTML = data.resultados.map(p => `<div class="card"><h3>${p.titulo}</h3><p>${p.descricao || 'Sem descrição'}</p><div class="meta"><span>${p.estado || 'N/A'}</span><span>${p.orgao || 'N/A'}</span><span>${p.tipo || 'Portal'}</span></div>${p.url ? `<p><a href="${p.url}" target="_blank">🔗 Acessar</a></p>` : ''}</div>`).join('');
+                
+                // Verificar se a resposta tem o formato esperado
+                const total = data.total || data.resultados?.length || 0;
+                const resultados = data.resultados || [];
+                
+                statsDiv.textContent = `${total} resultados encontrados`;
+                
+                if (resultados.length === 0) { 
+                    resultsDiv.innerHTML = '<div class="empty">Nenhum resultado encontrado</div>'; 
+                    return; 
+                }
+                
+                resultsDiv.innerHTML = resultados.map(p => `
+                    <div class="card">
+                        <h3>${p.titulo || 'Sem título'}</h3>
+                        <p>${p.descricao || 'Sem descrição'}</p>
+                        <div class="meta">
+                            <span>${p.estado || 'N/A'}</span>
+                            <span>${p.orgao || 'N/A'}</span>
+                            <span>${p.tipo || 'Portal'}</span>
+                        </div>
+                        ${p.url ? `<p><a href="${p.url}" target="_blank">🔗 Acessar</a></p>` : ''}
+                    </div>
+                `).join('');
             } catch (error) { resultsDiv.innerHTML = `<div class="empty">Erro: ${error.message}</div>`; }
         }
         buscar();

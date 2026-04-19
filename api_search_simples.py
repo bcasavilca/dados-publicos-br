@@ -104,6 +104,60 @@ def search():
     except Exception as e:
         return jsonify({'erro': str(e)}), 500
 
+@app.route('/setup')
+def setup():
+    """Cria tabela e insere dados de teste"""
+    try:
+        conn = get_db()
+        cur = conn.cursor()
+        
+        # Criar tabela
+        cur.execute("""
+            CREATE TABLE IF NOT EXISTS documents (
+                id SERIAL PRIMARY KEY,
+                titulo VARCHAR(500),
+                descricao TEXT,
+                orgao VARCHAR(255),
+                estado VARCHAR(2),
+                url VARCHAR(1000),
+                fonte VARCHAR(100),
+                search_vector tsvector GENERATED ALWAYS AS (
+                    to_tsvector('portuguese', 
+                        coalesce(titulo, '') || ' ' || 
+                        coalesce(descricao, '')
+                    )
+                ) STORED
+            )
+        """)
+        
+        # Criar índice
+        cur.execute("CREATE INDEX IF NOT EXISTS idx_search ON documents USING GIN(search_vector)")
+        
+        # Inserir dados de teste
+        dados_teste = [
+            ('Saúde Pública Bahia', 'Dados de vacinação e hospitais', 'Secretaria de Saúde', 'BA', 'https://exemplo.com/ba-saude', 'teste'),
+            ('Educação São Paulo', 'Escolas e professores', 'Secretaria de Educação', 'SP', 'https://exemplo.com/sp-edu', 'teste'),
+            ('Transporte Ceará', 'Ônibus e metrô', 'Secretaria de Transportes', 'CE', 'https://exemplo.com/ce-trans', 'teste'),
+            ('Gastos Fortaleza', 'Diárias e licitações', 'Prefeitura de Fortaleza', 'CE', 'https://exemplo.com/fort-gastos', 'teste'),
+            ('Saúde Recife', 'Postos de saúde', 'Prefeitura de Recife', 'PE', 'https://exemplo.com/rec-saude', 'teste'),
+        ]
+        
+        for d in dados_teste:
+            cur.execute("""
+                INSERT INTO documents (titulo, descricao, orgao, estado, url, fonte)
+                VALUES (%s, %s, %s, %s, %s, %s)
+                ON CONFLICT DO NOTHING
+            """, d)
+        
+        conn.commit()
+        cur.close()
+        conn.close()
+        
+        return jsonify({'status': 'ok', 'mensagem': 'Tabela criada e 5 registros inseridos'})
+    
+    except Exception as e:
+        return jsonify({'erro': str(e)}), 500
+
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))
     print(f"API Railway - Porta {port}")

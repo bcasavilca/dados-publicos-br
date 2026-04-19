@@ -142,7 +142,7 @@ async function handleSearch() {
     );
     
     try {
-        const fetchPromise = fetch(`${API_URL}/buscar?q=${encodeURIComponent(term)}`);
+        const fetchPromise = fetch(`${API_URL}/search?q=${encodeURIComponent(term)}`);
         const response = await Promise.race([fetchPromise, timeoutPromise]);
         
         if (!response.ok) throw new Error('HTTP ' + response.status);

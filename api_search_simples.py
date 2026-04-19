@@ -114,6 +114,51 @@ def search():
     except Exception as e:
         return jsonify({'erro': str(e)}), 500
 
+@app.route('/importar-csv')
+def importar_csv():
+    """Importa os 86 portais do CSV para o banco"""
+    import csv
+    
+    try:
+        conn = get_db()
+        cur = conn.cursor()
+        
+        # Ler CSV
+        csv_path = os.path.join(os.path.dirname(__file__), 'data', 'catalogos.csv')
+        with open(csv_path, 'r', encoding='utf-8') as f:
+            reader = csv.DictReader(f)
+            portais = list(reader)
+        
+        inseridos = 0
+        for p in portais:
+            cur.execute("""
+                INSERT INTO documents (titulo, descricao, orgao, estado, url, fonte)
+                VALUES (%s, %s, %s, %s, %s, %s)
+                ON CONFLICT DO NOTHING
+            """, (
+                p.get('Titulo', ''),
+                f"{p.get('Esfera', '')} - {p.get('TipoAcesso', '')} - {p.get('Qualidade', '')}",
+                p.get('Municipio', 'N/A') or p.get('Esfera', ''),
+                p.get('UF', ''),
+                p.get('URL', ''),
+                'catalogo_csv'
+            ))
+            inseridos += cur.rowcount
+        
+        conn.commit()
+        cur.close()
+        conn.close()
+        
+        return jsonify({
+            'status': 'ok',
+            'total_csv': len(portais),
+            'inseridos': inseridos,
+            'mensagem': f'{inseridos} de {len(portais)} portais importados'
+        })
+    
+    except Exception as e:
+        return jsonify({'erro': str(e)}), 500
+
 @app.route('/setup')
 def setup():
     """Cria tabela e insere dados de teste"""

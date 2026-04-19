@@ -1,23 +1,29 @@
 #!/usr/bin/env python3
 """
-Motor de Regras - Detecção de Padrões Suspeitos
-Estrutura: dados → regras → sinais (alertas)
+Motor de Regras v2.0 - Detecao de Padroes Suspeitos
+Estrutura: dados → regras → sinais (alertas) com confianca
 """
 
 from dataclasses import dataclass
 from typing import List, Dict, Optional
 from datetime import datetime
 import statistics
+import math
+
+ENGINE_VERSION = "v2.0"
 
 @dataclass
 class Alerta:
-    """Modelo padronizado de alerta"""
+    """Modelo padronizado de alerta com confianca"""
     tipo: str
     descricao: str
-    nivel_risco: str  # 'baixo', 'medio', 'alto', 'critico'
-    score: float      # 0.0 a 1.0
+    nivel_risco: str
+    score: float
+    confianca: float
+    nivel_confianca: str
     evidencias: Dict
     fontes: List[str]
+    nota: str = ""
     timestamp: str = None
     
     def __post_init__(self):
@@ -26,21 +32,36 @@ class Alerta:
 
 class Regra:
     """Classe base para todas as regras"""
+    def calcular_confianca(self, total_contratos: int) -> float:
+        """Confianca nao-linear: cresce rapido no inicio, estabiliza depois"""
+        return 1 - math.exp(-total_contratos / 20)
+    
+    def nivel_confianca(self, conf: float) -> str:
+        if conf >= 0.75:
+            return 'alta'
+        elif conf >= 0.4:
+            return 'media'
+        return 'baixa'
+    
     def analisar(self, dados: Dict) -> Optional[Alerta]:
-        """Retorna alerta ou None se não aplicável"""
         raise NotImplementedError
 
 class RegraFornecedorRecorrente(Regra):
     """
     Regra 1: Mesma empresa ganhando muitos contratos
-    Alerta se empresa tem > 20% dos contratos do órgão
+    Alerta se empresa tem > 40% dos contratos (com confianca)
     """
     def analisar(self, dados: Dict) -> Optional[Alerta]:
         contratos = dados.get('contratos', [])
-        if len(contratos) < 5:  # Precisa ter dados suficientes
+        total = len(contratos)
+        
+        if total < 5:
             return None
         
-        # Contar contratos por fornecedor
+        confianca = self.calcular_confianca(total)
+        nivel_conf = self.nivel_confianca(confianca)
+        
+        # Contar por fornecedor
         fornecedores = {}
         for c in contratos:
             forn = c.get('fornecedor', 'N/A')
@@ -50,35 +71,49 @@ class RegraFornecedorRecorrente(Regra):
             fornecedores[forn]['qtd'] += 1
             fornecedores[forn]['valor'] += valor
         
-        total_contratos = len(contratos)
-        
         for forn, dados_forn in fornecedores.items():
-            percentual = dados_forn['qtd'] / total_contratos
+            percentual = dados_forn['qtd'] / total
             
-            if percentual >= 0.40:  # Aumentado de 20% para 40%
-                score = min(percentual * 2, 1.0)  # Score baseado na concentração
-                nivel = 'alto' if percentual > 0.40 else 'medio'
-                
-                return Alerta(
-                    tipo='fornecedor_recorrente',
-                    descricao=f'{forn} recebeu {dados_forn["qtd"]} contratos ({percentual:.1%})',
-                    nivel_risco=nivel,
-                    score=round(score, 2),
-                    evidencias={
-                        'fornecedor': forn,
-                        'quantidade_contratos': dados_forn['qtd'],
-                        'percentual': round(percentual, 2),
-                        'valor_total': dados_forn['valor']
-                    },
-                    fontes=['Compras.gov.br']
-                )
+            # Score por faixas
+            if percentual >= 0.70:
+                score_bruto = 1.0
+                nivel = 'critico'
+            elif percentual >= 0.50:
+                score_bruto = 0.8
+                nivel = 'alto'
+            elif percentual >= 0.40:
+                score_bruto = 0.6
+                nivel = 'medio'
+            else:
+                continue
+            
+            # Ajusta pela confianca
+            score_final = score_bruto * confianca
+            
+            # Nota
+            nota = f"Confianca {nivel_conf}" if confianca < 0.75 else ""
+            
+            return Alerta(
+                tipo='fornecedor_recorrente',
+                descricao=f'{forn}: {dados_forn["qtd"]} contratos ({percentual:.1%})',
+                nivel_risco=nivel,
+                score=round(score_final, 2),
+                confianca=round(confianca, 2),
+                nivel_confianca=nivel_conf,
+                evidencias={
+                    'fornecedor': forn,
+                    'quantidade': dados_forn['qtd'],
+                    'percentual': round(percentual, 2),
+                    'valor_total': dados_forn['valor'],
+                    'total_contratos': total
+                },
+                fontes=['Compras.gov.br'],
+                nota=nota
+            )
         return None
 
 class RegraValorAnomalo(Regra):
-    """
-    Regra 2: Valor muito acima da média
-    Alerta se contrato é > 3x desvio padrão acima da média
-    """
+    """Regra 2: Valor muito acima da media"""
     def analisar(self, dados: Dict) -> Optional[Alerta]:
         contratos = dados.get('contratos', [])
         valores = [c.get('valor', 0) for c in contratos if c.get('valor', 0) > 0]
@@ -86,109 +121,34 @@ class RegraValorAnomalo(Regra):
         if len(valores) < 5:
             return None
         
+        confianca = self.calcular_confianca(len(valores))
+        nivel_conf = self.nivel_confianca(confianca)
+        
         media = statistics.mean(valores)
         desvio = statistics.stdev(valores) if len(valores) > 1 else 0
         
         for c in contratos:
             valor = c.get('valor', 0)
-            if valor > media + (3 * desvio):  # 3 sigma
-                score = min((valor / media) / 5, 1.0)  # Normaliza
+            if valor > media + (3 * desvio):
+                score_bruto = min((valor / media) / 5, 1.0)
+                score_final = score_bruto * confianca
+                
                 return Alerta(
                     tipo='valor_anomalo',
-                    descricao=f'Contrato de R$ {valor:,.2f} é {valor/media:.1f}x acima da média',
+                    descricao=f'R$ {valor:,.2f} ({valor/media:.1f}x media)',
                     nivel_risco='alto',
-                    score=round(score, 2),
+                    score=round(score_final, 2),
+                    confianca=round(confianca, 2),
+                    nivel_confianca=nivel_conf,
                     evidencias={
-                        'valor_contrato': valor,
-                        'media_orgao': round(media, 2),
-                        'desvio_padrao': round(desvio, 2),
+                        'valor': valor,
+                        'media': round(media, 2),
+                        'desvio': round(desvio, 2),
                         'fornecedor': c.get('fornecedor', 'N/A')
                     },
-                    fontes=['Compras.gov.br']
+                    fontes=['Compras.gov.br'],
+                    nota=f"Confianca {nivel_conf}" if confianca < 0.75 else ""
                 )
-        return None
-
-class RegraEmpresaNova(Regra):
-    """
-    Regra 3: Empresa criada recentemente com contratos grandes
-    Alerta se empresa tem < 1 ano e recebeu contrato > R$ 100k
-    """
-    def analisar(self, dados: Dict) -> Optional[Alerta]:
-        contratos = dados.get('contratos', [])
-        empresas = dados.get('empresas', {})
-        
-        for c in contratos:
-            forn = c.get('fornecedor', '')
-            valor = c.get('valor', 0)
-            
-            info_emp = empresas.get(forn, {})
-            data_abertura = info_emp.get('data_abertura')
-            
-            if data_abertura and valor > 100000:
-                # Calcular idade da empresa (simplificado)
-                from datetime import datetime
-                try:
-                    data_emp = datetime.strptime(data_abertura, '%Y-%m-%d')
-                    idade_dias = (datetime.now() - data_emp).days
-                    
-                    if idade_dias < 365:  # Menos de 1 ano
-                        score = min(valor / 500000, 1.0)  # Maior valor = maior score
-                        return Alerta(
-                            tipo='empresa_nova_com_contrato',
-                            descricao=f'{forn} tem {idade_dias} dias e recebeu R$ {valor:,.2f}',
-                            nivel_risco='critico',
-                            score=round(score, 2),
-                            evidencias={
-                                'fornecedor': forn,
-                                'valor_contrato': valor,
-                                'dias_desde_abertura': idade_dias,
-                                'data_abertura': data_abertura
-                            },
-                            fontes=['Compras.gov.br', 'Receita Federal']
-                        )
-                except:
-                    pass
-        return None
-
-class RegraIncompatibilidadeCNAE(Regra):
-    """
-    Regra 4: Atividade da empresa não bate com contrato
-    Ex: Padaria ganhando contrato de TI
-    """
-    def analisar(self, dados: Dict) -> Optional[Alerta]:
-        contratos = dados.get('contratos', [])
-        empresas = dados.get('empresas', {})
-        
-        incompatibilidades = {
-            'TI': ['padaria', 'restaurante', 'comercio'],
-            'obra': ['consultoria', 'advocacia'],
-            'servico_medico': ['construcao', 'alimentacao']
-        }
-        
-        for c in contratos:
-            forn = c.get('fornecedor', '')
-            tipo_servico = c.get('tipo_servico', '').lower()
-            
-            info_emp = empresas.get(forn, {})
-            cnae = info_emp.get('cnae', '').lower()
-            
-            for servico, incompat in incompatibilidades.items():
-                if servico in tipo_servico:
-                    for palavra in incompat:
-                        if palavra in cnae:
-                            return Alerta(
-                                tipo='incompatibilidade_cnae',
-                                descricao=f'{forn} ({cnae}) ganhou contrato de {tipo_servico}',
-                                nivel_risco='medio',
-                                score=0.6,
-                                evidencias={
-                                    'fornecedor': forn,
-                                    'cnae_principal': cnae,
-                                    'tipo_contrato': tipo_servico,
-                                    'valor': c.get('valor', 0)
-                                },
-                                fontes=['Compras.gov.br', 'Receita Federal']
-                            )
         return None
 
 class MotorRegras:
@@ -197,23 +157,10 @@ class MotorRegras:
     def __init__(self):
         self.regras = [
             RegraFornecedorRecorrente(),
-            RegraValorAnomalo(),
-            RegraEmpresaNova(),
-            RegraIncompatibilidadeCNAE()
+            RegraValorAnomalo()
         ]
-        
-        # Pesos para cálculo de risco total
-        self.pesos = {
-            'fornecedor_recorrente': 0.6,  # Aumentado de 0.4
-            'valor_anomalo': 0.3,
-            'empresa_nova_com_contrato': 0.3,
-            'incompatibilidade_cnae': 0.2
-        }
     
     def analisar(self, dados: Dict) -> Dict:
-        """
-        Executa todas as regras e retorna resultado completo
-        """
         alertas = []
         
         for regra in self.regras:
@@ -221,74 +168,91 @@ class MotorRegras:
             if alerta:
                 alertas.append(alerta)
         
-        # Calcular score total ponderado
+        # Score medio ponderado pela confianca
         if alertas:
-            score_total = sum(
-                a.score * self.pesos.get(a.tipo, 0.1) 
-                for a in alertas
-            )
-            score_total = min(score_total, 1.0)
+            score = sum(a.score for a in alertas) / len(alertas)
+            confianca_media = sum(a.confianca for a in alertas) / len(alertas)
         else:
-            score_total = 0.0
+            score = 0.0
+            confianca_media = self.calcular_confianca(len(dados.get('contratos', [])))
         
-        # Determinar nível geral
-        if score_total >= 0.7:
-            nivel_geral = 'critico'
-        elif score_total >= 0.5:
-            nivel_geral = 'alto'
-        elif score_total >= 0.3:
-            nivel_geral = 'medio'
-        else:
-            nivel_geral = 'baixo'
-        
-        return {
-            'orgao_analisado': dados.get('orgao', 'N/A'),
-            'total_alertas': len(alertas),
-            'score_risco': round(score_total, 2),
-            'nivel_risco_geral': nivel_geral,
-            'alertas': [self._alerta_to_dict(a) for a in alertas],
-            'recomendacao': self._gerar_recomendacao(alertas, score_total)
-        }
-    
-    def _alerta_to_dict(self, alerta: Alerta) -> Dict:
-        return {
-            'tipo': alerta.tipo,
-            'descricao': alerta.descricao,
-            'nivel_risco': alerta.nivel_risco,
-            'score': alerta.score,
-            'evidencias': alerta.evidencias,
-            'fontes': alerta.fontes,
-            'timestamp': alerta.timestamp
-        }
-    
-    def _gerar_recomendacao(self, alertas: List[Alerta], score: float) -> str:
+        # Nivel geral
         if score >= 0.7:
-            return 'Investigação prioritária recomendada. Múltiplos sinais de risco alto.'
+            nivel = 'critico'
         elif score >= 0.5:
-            return 'Revisão detalhada sugerida. Verificar relações comerciais.'
+            nivel = 'alto'
         elif score >= 0.3:
-            return 'Monitoramento recomendado. Padronização atípica detectada.'
+            nivel = 'medio'
         else:
-            return 'Nenhuma ação imediata necessária. Padrões dentro da normalidade.'
+            nivel = 'baixo'
+        
+        return {
+            'aviso_legal': 'Este resultado nao indica irregularidade, apenas padrao estatistico. Nao use como prova sem investigacao adicional.',
+            'uso_recomendado': 'apoio a analise, nao evidencia conclusiva',
+            'engine_version': ENGINE_VERSION,
+            'orgao_analisado': dados.get('orgao', 'N/A'),
+            'score_risco': round(score, 2),
+            'confianca_media': round(confianca_media, 2),
+            'nivel_risco_geral': nivel,
+            'total_alertas': len(alertas),
+            'alertas': [{
+                'tipo': a.tipo,
+                'descricao': a.descricao,
+                'nivel_risco': a.nivel_risco,
+                'score': a.score,
+                'confianca': a.confianca,
+                'nivel_confianca': a.nivel_confianca,
+                'nota': a.nota,
+                'evidencias': a.evidencias
+            } for a in alertas],
+            'recomendacao': self._gerar_recomendacao(alertas, score, confianca_media)
+        }
+    
+    def calcular_confianca(self, total: int) -> float:
+        return 1 - math.exp(-total / 20)
+    
+    def _gerar_recomendacao(self, alertas: List, score: float, confianca: float) -> str:
+        if confianca < 0.4:
+            return "Volume insuficiente para analise conclusiva. Coletar mais dados."
+        
+        if score >= 0.7:
+            return "Investigacao prioritária. Sinais de risco significativos."
+        elif score >= 0.5:
+            return "Revisao detalhada sugerida. Verificar relacoes comerciais."
+        elif score >= 0.3:
+            return "Monitoramento recomendado. Padroes atipicos detectados."
+        return "Padroes dentro da normalidade."
 
-# Exemplo de uso
+# Teste
 if __name__ == '__main__':
     motor = MotorRegras()
     
-    # Dados de exemplo
-    dados_teste = {
-        'orgao': 'Prefeitura de Exemplo',
-        'contratos': [
-            {'fornecedor': 'Empresa X', 'valor': 500000, 'tipo_servico': 'TI'},
-            {'fornecedor': 'Empresa X', 'valor': 450000, 'tipo_servico': 'TI'},
-            {'fornecedor': 'Empresa X', 'valor': 600000, 'tipo_servico': 'TI'},
-            {'fornecedor': 'Empresa Y', 'valor': 50000, 'tipo_servico': 'limpeza'},
-            {'fornecedor': 'Empresa Z', 'valor': 30000, 'tipo_servico': 'manutencao'},
-        ],
-        'empresas': {
-            'Empresa X': {'data_abertura': '2024-01-15', 'cnae': 'Padaria e confeitaria'},
-        }
-    }
+    print(f"Motor de Regras v{ENGINE_VERSION}")
+    print("=" * 60)
     
-    resultado = motor.analisar(dados_teste)
-    print(json.dumps(resultado, indent=2, ensure_ascii=False))
+    # Teste 1: 5 contratos (confianca baixa)
+    print("\n=== Teste 1: 5 contratos ===")
+    r1 = motor.analisar({
+        'orgao': 'Prefeitura Pequena',
+        'contratos': [
+            {'fornecedor': 'Emp A', 'valor': 50000},
+            {'fornecedor': 'Emp A', 'valor': 45000},
+            {'fornecedor': 'Emp B', 'valor': 48000},
+            {'fornecedor': 'Emp C', 'valor': 52000},
+            {'fornecedor': 'Emp D', 'valor': 47000},
+        ]
+    })
+    print(f"Score: {r1['score_risco']} | Conf: {r1['confianca_media']:.2f} | {r1['nivel_risco_geral']}")
+    if r1['alertas']:
+        print(f"Nota: {r1['alertas'][0]['nota']}")
+    
+    # Teste 2: 50 contratos (confianca alta)
+    print("\n=== Teste 2: 50 contratos ===")
+    contratos_50 = [{'fornecedor': 'Emp X', 'valor': 100000} for _ in range(25)]
+    contratos_50 += [{'fornecedor': f'Emp {i}', 'valor': 50000} for i in range(25)]
+    
+    r2 = motor.analisar({
+        'orgao': 'Prefeitura Grande',
+        'contratos': contratos_50
+    })
+    print(f"Score: {r2['score_risco']} | Conf: {r2['confianca_media']:.2f} | {r2['nivel_risco_geral']}")

@@ -4,7 +4,7 @@
  */
 
 // Configuração
-const API_URL = 'https://dados-publicos-br.onrender.com';
+const API_URL = window.location.origin + '/api';
 
 // Estado global
 let state = {

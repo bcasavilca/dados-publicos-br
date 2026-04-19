@@ -217,6 +217,60 @@ def setup():
     except Exception as e:
         return jsonify({'erro': str(e)}), 500
 
+@app.route('/buscar-dadosgov')
+def buscar_dadosgov():
+    """Busca no dados.gov.br e insere no PostgreSQL"""
+    import requests
+    
+    termo = request.args.get('q', 'saude')
+    limite = int(request.args.get('limit', 100))
+    
+    try:
+        # Buscar API dados.gov.br
+        url = f'https://dados.gov.br/api/3/search/datasets?q={termo}&rows={limite}'
+        resp = requests.get(url, timeout=30)
+        data = resp.json()
+        
+        datasets = data.get('results', [])
+        
+        conn = get_db()
+        cur = conn.cursor()
+        
+        inseridos = 0
+        for ds in datasets:
+            org = ds.get('organization', {}) or {}
+            org_nome = org.get('title', 'N/A') if isinstance(org, dict) else 'N/A'
+            
+            cur.execute("""
+                INSERT INTO documents (titulo, descricao, orgao, url, fonte, tipo, estado)
+                VALUES (%s, %s, %s, %s, %s, %s, %s)
+                ON CONFLICT DO NOTHING
+            """, (
+                ds.get('title', '')[:500],
+                ds.get('notes', '')[:1000],
+                org_nome[:255],
+                ds.get('url', '') or f"https://dados.gov.br/dataset/{ds.get('name', '')}",
+                'dados.gov.br',
+                'dataset',
+                'BR'  # Nacional
+            ))
+            inseridos += cur.rowcount
+        
+        conn.commit()
+        cur.close()
+        conn.close()
+        
+        return jsonify({
+            'status': 'ok',
+            'termo_busca': termo,
+            'total_encontrado': len(datasets),
+            'inseridos': inseridos,
+            'mensagem': f'{inseridos} datasets de "{termo}" adicionados do dados.gov.br'
+        })
+        
+    except Exception as e:
+        return jsonify({'erro': str(e)}), 500
+
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))
     print(f"API Railway - Porta {port}")

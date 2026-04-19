@@ -1,0 +1,73 @@
+name: Reportar URL Incorreta
+description: Reporte uma URL de portal de transparência que não está funcionando
+labels: ["url-correcao", "help-wanted"]
+body:
+  - type: input
+    id: portal-nome
+    attributes:
+      label: Nome do Portal
+      description: Qual é o nome do portal de transparência?
+      placeholder: Exemplo Portal da Transparência de Maceió
+    validations:
+      required: true
+      
+  - type: input
+    id: url-atual
+    attributes:
+      label: URL Atual (Incorreta)
+      description: Qual URL está cadastrada no sistema?
+      placeholder: https://url-incorreta.gov.br
+    validations:
+      required: true
+      
+  - type: input
+    id: url-correta
+    attributes:
+      label: URL Correta
+      description: Qual é a URL que realmente funciona?
+      placeholder: https://url-correta.gov.br
+    validations:
+      required: true
+      
+  - type: dropdown
+    id: estado
+    attributes:
+      label: Estado (UF)
+      description: Qual estado o portal pertence?
+      options:
+        - AC
+        - AL
+        - AP
+        - AM
+        - BA
+        - CE
+        - DF
+        - ES
+        - GO
+        - MA
+        - MT
+        - MS
+        - MG
+        - PA
+        - PB
+        - PR
+        - PE
+        - PI
+        - RJ
+        - RN
+        - RS
+        - RO
+        - RR
+        - SC
+        - SP
+        - SE
+        - TO
+    validations:
+      required: true
+      
+  - type: textarea
+    id: observacoes
+    attributes:
+      label: Observações
+      description: Alguma informação adicional?
+      placeholder: O site mudou de domínio recentemente, ou tem alguma observação específica...

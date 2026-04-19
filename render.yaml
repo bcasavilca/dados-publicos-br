@@ -1,0 +1,13 @@
+services:
+  - type: web
+    name: dados-publicos-br
+    runtime: python
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: cd scripts && python api_integracoes_robusta.py
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.0
+      - key: FLASK_ENV
+        value: production
+    healthCheckPath: /health

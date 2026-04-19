@@ -1,1 +1,1 @@
-web: cd scripts && python api_integracoes_robusta.py
+web: python scripts/api_simples.py

@@ -320,16 +320,15 @@ def corrigir_maceio():
 
 @app.route('/limpar-e-reimportar')
 def limpar_reimportar():
-    """Remove dados de teste e reimporta do CSV"""
+    """Remove dados de teste e reimporta do CSV sem duplicatas"""
     import csv
     
     try:
         conn = get_db()
         cur = conn.cursor()
         
-        # 1. Remover dados de teste (fonte = 'teste')
-        cur.execute("DELETE FROM documents WHERE fonte = 'teste'")
-        removidos_teste = cur.rowcount
+        # 1. Limpar tabela completamente
+        cur.execute("DELETE FROM documents")
         
         # 2. Ler CSV
         csv_path = os.path.join(os.path.dirname(__file__), 'data', 'catalogos.csv')
@@ -337,13 +336,19 @@ def limpar_reimportar():
             reader = csv.DictReader(f)
             portais = list(reader)
         
-        # 3. Inserir dados do CSV
-        inseridos = 0
+        # 3. Usar dict para evitar duplicatas (URL como chave)
+        portais_unicos = {}
         for p in portais:
+            url = p.get('URL', '')
+            if url and url not in portais_unicos:
+                portais_unicos[url] = p
+        
+        # 4. Inserir dados únicos
+        inseridos = 0
+        for p in portais_unicos.values():
             cur.execute("""
                 INSERT INTO documents (titulo, descricao, orgao, estado, url, fonte)
                 VALUES (%s, %s, %s, %s, %s, %s)
-                ON CONFLICT DO NOTHING
             """, (
                 p.get('Titulo', ''),
                 f"{p.get('Esfera', '')} - {p.get('TipoAcesso', '')} - {p.get('Qualidade', '')}",
@@ -360,10 +365,10 @@ def limpar_reimportar():
         
         return jsonify({
             'status': 'ok',
-            'removidos_teste': removidos_teste,
-            'inseridos_csv': inseridos,
             'total_csv': len(portais),
-            'mensagem': f'{removidos_teste} dados de teste removidos, {inseridos} portais do CSV importados'
+            'duplicatas_removidas': len(portais) - len(portais_unicos),
+            'inseridos_unicos': inseridos,
+            'mensagem': f'{inseridos} portais únicos importados ({len(portais) - len(portais_unicos)} duplicatas removidas)'
         })
     
     except Exception as e:

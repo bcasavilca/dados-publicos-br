@@ -40,7 +40,7 @@ TCM-PI Dados Abertos,http://www.tcm.pi.gov.br/,,PI,Estadual,Legislativo,API,API,
 Transparencia Teresina,https://transparencia.teresina.pi.gov.br/,Teresina,PI,Municipal,Executivo,Transparencia,Scraping,HTML/PDF,Baixa,Mensal,Financas
 Portal da Transparencia Aracaju,https://www.aracaju.se.gov.br/transparencia/,Aracaju,SE,Municipal,Executivo,Transparencia,Scraping,HTML/PDF,Baixa,Mensal,Financas
 Dados Abertos Sergipe,http://dados.se.gov.br/,,SE,Estadual,Executivo,DadosAbertos,API/Download,CSV/JSON,Media,Trimestral,Geral
-Portal da Transparencia Maceio,https://www.maceio.al.gov.br/transparencia/,Maceio,AL,Municipal,Executivo,Transparencia,Scraping,HTML/PDF,Baixa,Mensal,Financas
+Portal da Transparencia Maceio,https://www.transparencia.maceio.al.gov.br/transparencia/pages/homepage.faces,Maceio,AL,Municipal,Executivo,Transparencia,Scraping,HTML/PDF,Baixa,Mensal,Financas
 Transparencia Joao Pessoa,https://transparencia.joaopessoa.pb.gov.br/,Joao Pessoa,PB,Municipal,Executivo,Transparencia,Scraping,HTML/PDF,Baixa,Mensal,Financas
 Dados Abertos Paraiba,http://dados.pb.gov.br/,,PB,Estadual,Executivo,DadosAbertos,API/Download,CSV/JSON,Alta,Frequente,Geral
 Transparencia Teresina,https://transparencia.teresina.pi.gov.br/,Teresina,PI,Municipal,Executivo,Transparencia,Scraping,HTML/PDF,Baixa,Mensal,Financas

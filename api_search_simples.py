@@ -271,6 +271,36 @@ def buscar_dadosgov():
     except Exception as e:
         return jsonify({'erro': str(e)}), 500
 
+@app.route('/corrigir-maceio')
+def corrigir_maceio():
+    """Atualiza URL correta do portal de Maceio"""
+    try:
+        conn = get_db()
+        cur = conn.cursor()
+        
+        # Atualizar URL correta
+        cur.execute("""
+            UPDATE documents 
+            SET url = 'https://www.transparencia.maceio.al.gov.br/transparencia/pages/homepage.faces'
+            WHERE titulo ILIKE '%maceio%' 
+              AND url LIKE '%maceio.al.gov.br/transparencia%'
+        """)
+        
+        atualizados = cur.rowcount
+        conn.commit()
+        cur.close()
+        conn.close()
+        
+        return jsonify({
+            'status': 'ok',
+            'atualizados': atualizados,
+            'url_correta': 'https://www.transparencia.maceio.al.gov.br/transparencia/pages/homepage.faces',
+            'mensagem': f'{atualizados} registro(s) de Maceio atualizado(s)'
+        })
+    
+    except Exception as e:
+        return jsonify({'erro': str(e)}), 500
+
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))
     print(f"API Railway - Porta {port}")

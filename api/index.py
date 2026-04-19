@@ -1,8 +1,10 @@
-from http.server import BaseHTTPRequestHandler
-from urllib.parse import parse_qs, urlparse
-import json
+from flask import Flask, request, jsonify
+from flask_cors import CORS
 import csv
 import os
+
+app = Flask(__name__)
+CORS(app)
 
 # Carregar CSV de portais
 def carregar_portais():
@@ -11,35 +13,32 @@ def carregar_portais():
         with open(csv_path, 'r', encoding='utf-8') as f:
             reader = csv.DictReader(f)
             return list(reader)
-    except:
+    except Exception as e:
+        print(f"Erro ao carregar CSV: {e}")
         return []
 
 PORTAIS = carregar_portais()
 
-class handler(BaseHTTPRequestHandler):
-    def do_GET(self):
-        parsed = urlparse(self.path)
-        path = parsed.path
-        params = parse_qs(parsed.query)
-        
-        self.send_response(200)
-        self.send_header('Content-type', 'application/json')
-        self.send_header('Access-Control-Allow-Origin', '*')
-        self.end_headers()
-        
-        # Roteamento simples
-        if '/buscar' in path:
-            termo = params.get('q', [''])[0].lower()
-            resultados = [p for p in PORTAIS if any(termo in str(v).lower() for v in p.values())]
-            response = {'termo': termo, 'total': len(resultados), 'portais': resultados[:20]}
-        else:
-            # Health check
-            response = {
-                'status': 'online',
-                'servico': 'Dados Publicos BR API',
-                'versao': '2.3-vercel',
-                'total_portais': len(PORTAIS),
-                'endpoints': ['/api/', '/api/buscar?q=termo']
-            }
-        
-        self.wfile.write(json.dumps(response, ensure_ascii=False).encode())
+@app.route('/', methods=['GET'])
+def home():
+    return jsonify({
+        'status': 'online',
+        'servico': 'Dados Publicos BR API',
+        'versao': '2.4-vercel-flask',
+        'total_portais': len(PORTAIS),
+        'endpoints': ['/api/', '/api/buscar?q=termo']
+    })
+
+@app.route('/buscar', methods=['GET'])
+def buscar():
+    termo = request.args.get('q', '').lower()
+    resultados = [p for p in PORTAIS if any(termo in str(v).lower() for v in p.values())]
+    return jsonify({
+        'termo': termo,
+        'total': len(resultados),
+        'portais': resultados[:20]
+    })
+
+# Para Vercel serverless
+if __name__ == '__main__':
+    app.run()

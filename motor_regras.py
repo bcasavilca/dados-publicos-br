@@ -55,7 +55,7 @@ class RegraFornecedorRecorrente(Regra):
         for forn, dados_forn in fornecedores.items():
             percentual = dados_forn['qtd'] / total_contratos
             
-            if percentual >= 0.20:  # 20% ou mais
+            if percentual >= 0.40:  # Aumentado de 20% para 40%
                 score = min(percentual * 2, 1.0)  # Score baseado na concentração
                 nivel = 'alto' if percentual > 0.40 else 'medio'
                 
@@ -204,7 +204,7 @@ class MotorRegras:
         
         # Pesos para cálculo de risco total
         self.pesos = {
-            'fornecedor_recorrente': 0.4,
+            'fornecedor_recorrente': 0.6,  # Aumentado de 0.4
             'valor_anomalo': 0.3,
             'empresa_nova_com_contrato': 0.3,
             'incompatibilidade_cnae': 0.2

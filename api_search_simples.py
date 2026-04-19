@@ -102,7 +102,8 @@ def search():
                 'orgao': row[3],
                 'estado': row[4],
                 'url': row[5],
-                'fonte': row[6]
+                'fonte': row[6],
+                'tipo': 'portal'  # Adicionado para compatibilidade com frontend
             })
         
         cur.close()

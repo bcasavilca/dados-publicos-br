@@ -1,0 +1,51 @@
+version: '3.8'
+
+services:
+  # PostgreSQL
+  postgres:
+    image: postgres:15-alpine
+    container_name: dados_postgres
+    environment:
+      POSTGRES_DB: dados_publicos
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-postgres}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./docs/schema_postgres.sql:/docker-entrypoint-initdb.d/01-schema.sql
+    ports:
+      - "5432:5432"
+    networks:
+      - dados_network
+
+  # Meilisearch (motor de busca)
+  meilisearch:
+    image: getmeili/meilisearch:v1.6
+    container_name: dados_meili
+    environment:
+      MEILI_MASTER_KEY: ${MEILI_MASTER_KEY:-masterKey123}
+      MEILI_HTTP_ADDR: 0.0.0.0:7700
+    volumes:
+      - meili_data:/meili_data
+    ports:
+      - "7700:7700"
+    networks:
+      - dados_network
+
+  # Painel admin (opcional)
+  adminer:
+    image: adminer
+    container_name: dados_adminer
+    ports:
+      - "8080:8080"
+    networks:
+      - dados_network
+    depends_on:
+      - postgres
+
+volumes:
+  postgres_data:
+  meili_data:
+
+networks:
+  dados_network:
+    driver: bridge

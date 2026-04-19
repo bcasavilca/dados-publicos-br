@@ -1,4 +1,7 @@
-# Minimal requirements for Render
+# Requirements para Railway
 flask==3.0.0
 flask-cors==4.0.0
 gunicorn==21.2.0
+psycopg2-binary==2.9.9
+meilisearch==0.31.0
+requests==2.31.0

@@ -1,1 +1,1 @@
-web: python scripts/api_simples.py
+web: python api_search_simples.py

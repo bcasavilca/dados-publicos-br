@@ -13,10 +13,21 @@ from datetime import datetime
 app = Flask(__name__)
 CORS(app)
 
-# Meilisearch config
-MEILI_HOST = os.getenv('MEILI_HOST', 'http://localhost:7700')
-MEILI_KEY = os.getenv('MEILI_MASTER_KEY', 'masterKey123')
-meili_client = meilisearch.Client(MEILI_HOST, MEILI_KEY)
+# Meilisearch config - Railway usa variáveis de ambiente
+MEILI_HOST = os.getenv('MEILI_HOST', os.getenv('RAILWAY_MEILI_HOST', 'http://localhost:7700'))
+MEILI_KEY = os.getenv('MEILI_MASTER_KEY', os.getenv('RAILWAY_MEILI_KEY', 'masterKey123'))
+
+# PostgreSQL config
+DB_HOST = os.getenv('DB_HOST', os.getenv('RAILWAY_PG_HOST', 'localhost'))
+DB_PORT = os.getenv('DB_PORT', os.getenv('RAILWAY_PG_PORT', '5432'))
+DB_NAME = os.getenv('DB_NAME', os.getenv('RAILWAY_PG_DATABASE', 'dados_publicos'))
+DB_USER = os.getenv('DB_USER', os.getenv('RAILWAY_PG_USER', 'postgres'))
+DB_PASSWORD = os.getenv('DB_PASSWORD', os.getenv('RAILWAY_PG_PASSWORD', 'postgres'))
+
+try:
+    meili_client = meilisearch.Client(MEILI_HOST, MEILI_KEY)
+except:
+    meili_client = None
 
 @app.route('/')
 def home():

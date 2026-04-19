@@ -318,6 +318,58 @@ def corrigir_maceio():
     except Exception as e:
         return jsonify({'erro': str(e)}), 500
 
+@app.route('/limpar-e-reimportar')
+def limpar_reimportar():
+    """Remove dados de teste e reimporta do CSV"""
+    import csv
+    
+    try:
+        conn = get_db()
+        cur = conn.cursor()
+        
+        # 1. Remover dados de teste (fonte = 'teste')
+        cur.execute("DELETE FROM documents WHERE fonte = 'teste'")
+        removidos_teste = cur.rowcount
+        
+        # 2. Ler CSV
+        csv_path = os.path.join(os.path.dirname(__file__), 'data', 'catalogos.csv')
+        with open(csv_path, 'r', encoding='utf-8') as f:
+            reader = csv.DictReader(f)
+            portais = list(reader)
+        
+        # 3. Inserir dados do CSV
+        inseridos = 0
+        for p in portais:
+            cur.execute("""
+                INSERT INTO documents (titulo, descricao, orgao, estado, url, fonte, tipo)
+                VALUES (%s, %s, %s, %s, %s, %s, %s)
+                ON CONFLICT DO NOTHING
+            """, (
+                p.get('Titulo', ''),
+                f"{p.get('Esfera', '')} - {p.get('TipoAcesso', '')} - {p.get('Qualidade', '')}",
+                p.get('Municipio', 'N/A') or p.get('Esfera', 'N/A'),
+                p.get('UF', ''),
+                p.get('URL', ''),
+                'catalogo_csv',
+                'portal'
+            ))
+            inseridos += cur.rowcount
+        
+        conn.commit()
+        cur.close()
+        conn.close()
+        
+        return jsonify({
+            'status': 'ok',
+            'removidos_teste': removidos_teste,
+            'inseridos_csv': inseridos,
+            'total_csv': len(portais),
+            'mensagem': f'{removidos_teste} dados de teste removidos, {inseridos} portais do CSV importados'
+        })
+    
+    except Exception as e:
+        return jsonify({'erro': str(e)}), 500
+
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))
     print(f"API Railway - Porta {port}")

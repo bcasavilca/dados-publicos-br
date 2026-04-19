@@ -70,20 +70,23 @@ def search():
         conn = get_db()
         cur = conn.cursor()
         
-        # Busca com full-text search
+        # Busca flexível (ignora acentos e case)
         sql = """
             SELECT id, titulo, descricao, orgao, estado, url, fonte
             FROM documents
-            WHERE search_vector @@ plainto_tsquery('portuguese', %s)
+            WHERE LOWER(titulo) LIKE %s 
+               OR LOWER(descricao) LIKE %s
+               OR LOWER(orgao) LIKE %s
+               OR LOWER(estado) = %s
         """
-        params = [query]
+        termo_busca = f'%{query.lower()}%'
+        estado_busca = query.upper() if len(query) == 2 else ''
+        params = [termo_busca, termo_busca, termo_busca, estado_busca]
         
         if estado:
             sql += " AND estado = %s"
             params.append(estado.upper())
         
-        sql += " ORDER BY ts_rank(search_vector, plainto_tsquery('portuguese', %s)) DESC"
-        params.append(query)
         sql += " LIMIT %s"
         params.append(limite)
         

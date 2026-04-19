@@ -12,17 +12,27 @@ import os
 app = Flask(__name__)
 CORS(app)
 
-# Config PostgreSQL (Railway)
-DB_CONFIG = {
-    'host': os.getenv('RAILWAY_PG_HOST', os.getenv('DB_HOST', 'localhost')),
-    'port': os.getenv('RAILWAY_PG_PORT', os.getenv('DB_PORT', '5432')),
-    'database': os.getenv('RAILWAY_PG_DATABASE', os.getenv('DB_NAME', 'dados_publicos')),
-    'user': os.getenv('RAILWAY_PG_USER', os.getenv('DB_USER', 'postgres')),
-    'password': os.getenv('RAILWAY_PG_PASSWORD', os.getenv('DB_PASSWORD', 'postgres'))
-}
+# Config PostgreSQL (Railway) - Railway gera DATABASE_URL automaticamente
+import os
+import psycopg2
+from psycopg2.extras import RealDictCursor
+
+# Usar DATABASE_URL se disponível (Railway), senão usar config individual
+DATABASE_URL = os.getenv('DATABASE_URL')
 
 def get_db():
-    return psycopg2.connect(**DB_CONFIG)
+    if DATABASE_URL:
+        return psycopg2.connect(DATABASE_URL)
+    else:
+        # Fallback para variáveis individuais
+        conn = psycopg2.connect(
+            host=os.getenv('PGHOST', 'localhost'),
+            port=os.getenv('PGPORT', '5432'),
+            database=os.getenv('PGDATABASE', 'railway'),
+            user=os.getenv('PGUSER', 'postgres'),
+            password=os.getenv('PGPASSWORD', 'postgres')
+        )
+        return conn
 
 @app.route('/')
 def home():

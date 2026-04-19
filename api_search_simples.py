@@ -341,8 +341,8 @@ def limpar_reimportar():
         inseridos = 0
         for p in portais:
             cur.execute("""
-                INSERT INTO documents (titulo, descricao, orgao, estado, url, fonte, tipo)
-                VALUES (%s, %s, %s, %s, %s, %s, %s)
+                INSERT INTO documents (titulo, descricao, orgao, estado, url, fonte)
+                VALUES (%s, %s, %s, %s, %s, %s)
                 ON CONFLICT DO NOTHING
             """, (
                 p.get('Titulo', ''),
@@ -350,8 +350,7 @@ def limpar_reimportar():
                 p.get('Municipio', 'N/A') or p.get('Esfera', 'N/A'),
                 p.get('UF', ''),
                 p.get('URL', ''),
-                'catalogo_csv',
-                'portal'
+                'catalogo_csv'
             ))
             inseridos += cur.rowcount
         

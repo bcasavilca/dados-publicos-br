@@ -1,1 +1,1 @@
-web: python api_sem_banco.py
+web: echo "Restarting..."; python api_search_simples.py

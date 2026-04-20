@@ -110,10 +110,10 @@ function criarCard(item) {
                 <span class="meta-item">🏷️ ${item.Categoria}</span>
             </div>
             <div class="card-type">📡 ${item.TipoAcesso} | 📄 ${item.Formato}</div>
-            <div class="card-update">🕐 Atualização: ${item.Atualizacao}</div>
+                        <div class="card-update">🕐 Atualização: ${item.Atualizacao}</div>
         </div>
         <div class="card-actions">
-            <a href="${item.URL}" target="_blank" class="btn btn-primary">Acessar Portal →</a>
+        <a href="${item.URL}" target="_blank" class="btn btn-primary">Acessar Portal →</a>
         </div>
     </div>
     `;

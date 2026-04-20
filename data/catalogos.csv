@@ -82,5 +82,6 @@ Transparencia Rio Branco,https://transparencia.riobranco.ac.gov.br/,Rio Branco,A
 Dados Abertos Acre,https://dados.ac.gov.br/,,AC,Estadual,Executivo,DadosAbertos,API/Download,CSV/JSON,Alta,Frequente,Geral
 Transparencia Palmas,https://transparencia.palmas.to.gov.br/,Palmas,TO,Municipal,Executivo,Transparencia,Scraping,HTML/PDF,Baixa,Mensal,Financas
 Dados Abertos Tocantins,https://dados.to.gov.br/,,TO,Estadual,Executivo,DadosAbertos,API/Download,CSV/JSON,Alta,Frequente,Geral
+Portal da Transparencia Barra de Sao Miguel,https://www.barradesaomiguel.al.gov.br/portal-da-transparencia,Barra de Sao Miguel,AL,Municipal,Executivo,Transparencia,Scraping,HTML/PDF,Baixa,Mensal,Financas
 Transparencia Brasilia,https://transparencia.brasilia.df.gov.br/,Brasilia,DF,Distrital,Executivo,Transparencia,Scraping,HTML/PDF,Baixa,Mensal,Financas
 Dados Abertos Amazonas,https://dados.amazonas.am.gov.br/,,AM,Estadual,Executivo,DadosAbertos,API/Download,CSV/JSON,Alta,Frequente,Geral

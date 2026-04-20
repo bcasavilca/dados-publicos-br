@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
+# -*- coding: utf-8 -*-
 """
 API Gateway Unificado
-Roteia entre API de Catálogo e API de Investigação
+Roteia entre API de Catalogo e API de Investigacao
 """
 
 from flask import Flask, request, jsonify
@@ -12,7 +13,6 @@ CORS(app)
 
 # Import APIs
 from api.catalog import buscar as catalog_buscar
-from api.investigation import cerebro as investigation_cerebro
 
 @app.route('/')
 def index():
@@ -30,9 +30,9 @@ def buscar():
     return catalog_buscar.buscar(request.args.get('q'))
 
 # Investigation Routes  
-@app.route('/api/analise')
+@app.route('/api/analise', methods=['POST'])
 def analise():
-    return investigation_cerebro.analisar(request.json)
+    return jsonify({"status": "not implemented"})
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=True, port=5000)

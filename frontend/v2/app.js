@@ -4,7 +4,7 @@
  */
 
 // Configuração - API do Railway
-const API_URL = 'https://web-production-64ea5.up.railway.app';
+const API_URL = 'https://dados-publicos-br-catalogo.onrender.com/api';
 
 // Estado global
 let state = {

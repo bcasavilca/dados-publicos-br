@@ -19,7 +19,7 @@ document.addEventListener('DOMContentLoaded', () => {
 async function carregarDados() {
     mostrarLoading(true);
     try {
-        const response = await fetch(${API_URL}/buscar?q=);
+        const response = await fetch(`${API_URL}/buscar?q=`);
         const data = await response.json();
         allData = data.portais || [];
         filteredData = [...allData];
@@ -43,7 +43,7 @@ async function buscar() {
     }
     mostrarLoading(true);
     try {
-        const response = await fetch(${API_URL}/buscar?q=${encodeURIComponent(termo)});
+        const response = await fetch(`${API_URL}/buscar?q=${encodeURIComponent(termo)}`);
         const data = await response.json();
         filteredData = data.portais || [];
         filtrar();
@@ -95,7 +95,7 @@ function renderizarResultados(dados) {
 function criarCard(item) {
     const qualidadeClass = item.Qualidade?.toLowerCase() || 'baixa';
     const uf = item.UF || 'BR';
-    return 
+    return `
     <div class="card">
         <div class="card-header">
             <div class="card-title">${item.Titulo}</div>
@@ -110,13 +110,13 @@ function criarCard(item) {
                 <span class="meta-item">🏷️ ${item.Categoria}</span>
             </div>
             <div class="card-type">📡 ${item.TipoAcesso} | 📄 ${item.Formato}</div>
-            <div class="card-update">🕐 Atualização: ${item.Atualizacao}</div>
+                        <div class="card-update">🕐 Atualização: ${item.Atualizacao}</div>
         </div>
-<div class="card-actions">
-            <a href="${item.URL}" target="_blank" class="btn btn-primary">Acessar Portal →</a>
+        <div class="card-actions">
+        <a href="${item.URL}" target="_blank" class="btn btn-primary">Acessar Portal →</a>
         </div>
     </div>
-    ;
+    `;
 }
 
 // Atualizar estatisticas
@@ -140,7 +140,7 @@ function mostrarLoading(show) {
 // Mostrar erro
 function mostrarErro(mensagem) {
     const grid = document.getElementById('resultsGrid');
-    if (grid) grid.innerHTML = <div class="error-message">⚠️ ${mensagem}</div>;
+    if (grid) grid.innerHTML = `<div class="error-message">⚠️ ${mensagem}</div>`;
 }
 
 // Modal API

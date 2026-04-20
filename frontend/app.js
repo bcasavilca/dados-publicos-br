@@ -1,7 +1,7 @@
 // Configuracao da API
 const API_URL = window.location.hostname === 'localhost'
     ? 'http://localhost:5000'
-    'https://dados-publicos-br-catalogo.onrender.com/api';
+    : 'https://dados-publicos-br-catalogo.onrender.com/api';
 
 // Cache de dados
 let allData = [];

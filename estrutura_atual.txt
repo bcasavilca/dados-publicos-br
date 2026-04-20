@@ -1,0 +1,177 @@
+Folder PATH listing
+Volume serial number is 1CE9-5F0A
+C:.
+|   .env.example
+|   api.py
+|   api_cruzamento.py
+|   api_search.py
+|   api_search_simples.py
+|   api_sem_banco.py
+|   auditoria_dataset.sh
+|   AVISO_LEGAL.md
+|   baseline_completo.sh
+|   baseline_simples.sh
+|   baseline_temporal.sh
+|   check_valores.py
+|   comandos_railway.txt
+|   COMO_ATUALIZAR.md
+|   CORRECOES_URLS.md
+|   cruzador.py
+|   DEPLOY.md
+|   detector_anomalia_v3.sh
+|   docker-compose.yml
+|   Dockerfile
+|   estrutura_atual.txt
+|   fator_baseline.sh
+|   fix_render.md
+|   graph_engine_v1.sh
+|   graph_v1_1_corrigido.sh
+|   graph_v1_corrigido.sh
+|   graph_v2.sh
+|   GUIA_RAILWAY.md
+|   index.html
+|   listar_nordeste.py
+|   mercado_emergente_v31.sh
+|   mercado_v31_fix.sh
+|   motor_regras.py
+|   motor_regras_v2.py
+|   motor_v21_integrado.sh
+|   motor_v22_hibrido.sh
+|   motor_v23.sh
+|   motor_v241_calibrado.sh
+|   motor_v24_integrado.sh
+|   nivel2_hibrido.sh
+|   pipeline_correto.txt
+|   pipeline_fix.txt
+|   pipeline_sp_completo.txt
+|   pipeline_sp_corrigido.txt
+|   pipeline_sp_final.txt
+|   Procfile
+|   railway.json
+|   railway.toml
+|   README.md
+|   render.yaml
+|   requirements-vercel.txt
+|   requirements.txt
+|   RESUMO_EXECUCAO.md
+|   runtime.txt
+|   simulacao_corrigida.sh
+|   simulacao_fraude.sh
+|   simulacao_v2.txt
+|   sim_v2.py
+|   START.md
+|   start.sh
+|   temp.txt
+|   temporal.py
+|   testar_motor.py
+|   top_fornecedores.py
+|   top_fornecedores.sh
+|   v32_grafo_competitivo.sh
+|   v32_simples.sh
+|   v33_nao_destilado.sh
+|   v34_baseline_temporal.sh
+|   v34_execucao.py
+|   v36_execucao.py
+|   v371_calibracao.sh
+|   v37_causal.sh
+|   v40_structural.sh
+|   v40_taxonomia.sh
+|   v41_corrigido.sh
+|   vercel.json
+|   verificar_portais.py
+|   verificar_valores.sh
+|   
++---.github
+|   +---ISSUE_TEMPLATE
+|   |       corrigir-url.yml
+|   |       
+|   \---workflows
+|           validate.yml
+|           
++---api
+|       buscar.py
+|       index.js
+|       index.py
+|       requirements.txt
+|       
++---data
+|       catalogos.csv
+|       portais_descobertos.csv
+|       
++---docs
+|       CRUZAMENTO.md
+|       FONTES_FORTALEZA.md
+|       GUIA_BACKUP_PRIVADO.md
+|       PLANO_B_FORTALEZA.md
+|       schema_baseline.sql
+|       schema_postgres.sql
+|       
++---Documentos_Privados
+|       README.md
+|       
++---frontend
+|   |   app.js
+|   |   app_corrigido.js
+|   |   index.html
+|   |   package.json
+|   |   README.md
+|   |   simples.html
+|   |   style.css
+|   |   
+|   +---dashboard
+|   |       index.html
+|   |       
+|   \---v2
+|           app.js
+|           app_inteligencia.js
+|           DEPLOY_INSTRUCTIONS.md
+|           exploracao.html
+|           index.html
+|           README.md
+|           style.css
+|           
++---public
+|       index.html
+|       
++---scrapers
+|       amostra_csv.py
+|       buscar_sp_datasets.py
+|       debug_csv.py
+|       fortaleza_scraper.py
+|       inspecionar_dataset.py
+|       inspecionar_schema.py
+|       
++---scripts
+|   |   api.py
+|   |   api_cerebro.py
+|   |   api_hibrida.py
+|   |   api_integracoes.py
+|   |   api_integracoes_robusta.py
+|   |   api_inteligencia.py
+|   |   api_minimal.py
+|   |   api_monitor.py
+|   |   api_simple.py
+|   |   api_simples.py
+|   |   backup-diario.bat
+|   |   cerebro_digital.py
+|   |   classify.py
+|   |   criar_estrutura_pastas.bat
+|   |   dadosgov_crawler.py
+|   |   dadosgov_integration.py
+|   |   detect_ckan.py
+|   |   generate_baseline.py
+|   |   indexador.py
+|   |   ingest.py
+|   |   integracoes.py
+|   |   monitor.py
+|   |   normalizador.py
+|   |   pipeline_demo.py
+|   |   pipeline_etl_sp.py
+|   |   portal_discovery.py
+|   |   scraper_alrn.py
+|   |   validate.py
+|   |   
+|   \---scrapers
+\---__pycache__
+        motor_regras.cpython-312.pyc
+        

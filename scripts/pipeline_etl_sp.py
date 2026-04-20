@@ -15,17 +15,21 @@ import re
 # Configuracoes
 CSV_URL = 'https://dados.prefeitura.sp.gov.br/dataset/6588aef7-20ff-4cec-b1e1-6c06520240c0/resource/fd48b7dd-c5f1-4352-963f-f1e5ebc6d61b/download/contratos.csv'
 
-# PostgreSQL (Railway)
-DB_CONFIG = {
-    'host': os.getenv('PGHOST', 'localhost'),
-    'port': os.getenv('PGPORT', '5432'),
-    'database': os.getenv('PGDATABASE', 'railway'),
-    'user': os.getenv('PGUSER', 'postgres'),
-    'password': os.getenv('PGPASSWORD', 'postgres')
-}
+# PostgreSQL (Railway via DATABASE_URL)
+DATABASE_URL = os.getenv('DATABASE_URL')
 
 def get_db_connection():
-    return psycopg2.connect(**DB_CONFIG)
+    if DATABASE_URL:
+        return psycopg2.connect(DATABASE_URL)
+    else:
+        # Fallback para config manual
+        return psycopg2.connect(
+            host=os.getenv('PGHOST', 'localhost'),
+            port=os.getenv('PGPORT', '5432'),
+            database=os.getenv('PGDATABASE', 'railway'),
+            user=os.getenv('PGUSER', 'postgres'),
+            password=os.getenv('PGPASSWORD', 'postgres')
+        )
 
 def criar_tabela_contracts():
     """Cria tabela contracts se nao existir"""

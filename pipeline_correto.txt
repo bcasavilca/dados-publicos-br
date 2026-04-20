@@ -1,0 +1,139 @@
+#!/bin/bash
+# Pipeline CORRETO - filtra valores numéricos
+
+cat > pipeline_correto.py << 'EOF'
+import requests
+import os
+import psycopg2
+import re
+
+CSV_URL = 'https://dados.prefeitura.sp.gov.br/dataset/6588aef7-20ff-4cec-b1e1-6c06520240c0/resource/fd48b7dd-c5f1-4352-963f-f1e5ebc6d61b/download/contratos.csv'
+
+print("=" * 80)
+print("PIPELINE CORRETO - São Paulo 2024")
+print("=" * 80)
+
+conn = psycopg2.connect(os.getenv('DATABASE_URL'))
+cur = conn.cursor()
+
+# Recriar tabela
+cur.execute("DROP TABLE IF EXISTS sp_contratos")
+cur.execute("CREATE TABLE sp_contratos (id SERIAL PRIMARY KEY, orgao TEXT, fornecedor TEXT, valor NUMERIC)")
+
+print("\n[1/4] Baixando CSV...")
+r = requests.get(CSV_URL, timeout=120)
+lines = r.text.split('\n')
+print(f"Total de linhas: {len(lines):,}")
+
+# Encontrar header
+header_line = None
+for i, line in enumerate(lines[:10]):
+    if 'Fornecedor' in line:
+        header_line = i
+        break
+
+print(f"Header na linha: {header_line}")
+
+print("\n[2/4] Processando e FILTRANDO valores válidos...")
+
+def extrair_valor(valor_str):
+    """Extrai valor numérico ou retorna None se for texto"""
+    if not valor_str:
+        return None
+    
+    # Limpar aspas e espaços
+    v = valor_str.replace('"', '').strip()
+    
+    # Verificar se é valor numérico (contém dígitos)
+    if not re.search(r'\d', v):
+        return None  # É texto, não valor
+    
+    # Remover R$
+    v = v.replace('R$', '').replace('R$ ', '')
+    
+    # Formato brasileiro: 127.000,00
+    # Remove pontos de milhar
+    v = v.replace('.', '')
+    # Troca vírgula por ponto decimal
+    v = v.replace(',', '.')
+    
+    # Limpar qualquer outro caractere
+    v = re.sub(r'[^0-9.]', '', v)
+    
+    try:
+        valor = float(v)
+        # Validar faixa razoável (R$ 1 a R$ 10 bilhões)
+        if 1 <= valor <= 10_000_000_000:
+            return valor
+        else:
+            return None
+    except:
+        return None
+
+dados = []
+rejeitados = 0
+
+for line in lines[header_line + 1:]:
+    if not line.strip():
+        continue
+    
+    cols = line.split(';')
+    if len(cols) < 10:
+        continue
+    
+    fornecedor = cols[8].replace('"', '').strip() if len(cols) > 8 else ''
+    valor_str = cols[9] if len(cols) > 9 else ''
+    
+    valor = extrair_valor(valor_str)
+    
+    if valor and fornecedor:
+        dados.append(('Prefeitura SP', fornecedor, valor))
+    else:
+        rejeitados += 1
+    
+    if len(dados) >= 30000:
+        break
+
+print(f"✓ Válidos: {len(dados)}")
+print(f"⚠ Rejeitados (texto/inválido): {rejeitados}")
+
+print("\n[3/4] Inserindo no banco...")
+for d in dados:
+    cur.execute("INSERT INTO sp_contratos (orgao, fornecedor, valor) VALUES (%s, %s, %s)", d)
+
+conn.commit()
+print(f"✓ Inseridos: {len(dados)}")
+
+print("\n[4/4] Calculando baseline...")
+cur.execute("SELECT COUNT(*), COUNT(DISTINCT fornecedor), AVG(valor), MAX(valor), MIN(valor) FROM sp_contratos")
+row = cur.fetchone()
+
+cur.execute("""
+    SELECT fornecedor, COUNT(*) as qtd, SUM(valor) as total
+    FROM sp_contratos
+    GROUP BY fornecedor
+    ORDER BY qtd DESC
+    LIMIT 5
+""")
+top = cur.fetchall()
+
+conn.close()
+
+print("\n" + "=" * 80)
+print("BASELINE SP 2024 - CORRETO")
+print("=" * 80)
+print(f"Total de contratos: {row[0]:,}")
+print(f"Fornecedores únicos: {row[1]:,}")
+print(f"Valor médio: R$ {row[2]:,.2f}")
+print(f"Valor mediano: R$ {row[3]:,.2f}")
+print(f"Valor mínimo: R$ {row[4]:,.2f}")
+print(f"Valor máximo: R$ {row[5]:,.2f}")
+print("\nTop 5 fornecedores:")
+for i, r in enumerate(top, 1):
+    print(f"  {i}. {r[0][:45]}")
+    print(f"     {r[1]} contratos, R$ {r[2]:,.2f}")
+print("=" * 80)
+print("\n✅ PIPELINE CONCLUÍDO COM SUCESSO!")
+EOF
+
+python pipeline_correto.py

@@ -1,0 +1,56 @@
+#!/bin/bash
+# Comandos para executar no Railway SSH
+
+# 1. Verificar diretório atual
+pwd
+ls -la
+
+# 2. Verificar se há código Python
+find . -name "*.py" -type f 2>/dev/null | head -10
+
+# 3. Criar script de pipeline minimalista
+cat > pipeline_minimal.py << 'EOF'
+import os
+import psycopg2
+
+print("="*60)
+print("PIPELINE MINIMAL - Verificação Railway")
+print("="*60)
+
+# Conectar ao banco
+DATABASE_URL = os.getenv('DATABASE_URL')
+print(f"DATABASE_URL existe: {bool(DATABASE_URL)}")
+
+if DATABASE_URL:
+    try:
+        conn = psycopg2.connect(DATABASE_URL)
+        cur = conn.cursor()
+        
+        # Verificar tabelas existentes
+        cur.execute("SELECT tablename FROM pg_tables WHERE schemaname='public';")
+        tabelas = cur.fetchall()
+        print(f"\nTabelas encontradas: {len(tabelas)}")
+        for t in tabelas:
+            print(f"  - {t[0]}")
+        
+        # Verificar dados na tabela documents
+        try:
+            cur.execute("SELECT COUNT(*) FROM documents;")
+            count = cur.fetchone()[0]
+            print(f"\nRegistros em 'documents': {count}")
+        except:
+            print("\nTabela 'documents' não existe")
+        
+        conn.close()
+        print("\n✓ Conexão OK!")
+        
+    except Exception as e:
+        print(f"\n✗ Erro na conexão: {e}")
+else:
+    print("✗ DATABASE_URL não configurado")
+
+print("="*60)
+EOF
+
+# 4. Executar
+python pipeline_minimal.py

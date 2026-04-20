@@ -1,0 +1,201 @@
+#!/bin/bash
+# Pipeline corrigido para Railway
+
+cat > pipeline_sp_v2.py << 'ENDSCRIPT'
+import requests
+import os
+import psycopg2
+import re
+
+CSV_URL = 'https://dados.prefeitura.sp.gov.br/dataset/6588aef7-20ff-4cec-b1e1-6c06520240c0/resource/fd48b7dd-c5f1-4352-963f-f1e5ebc6d61b/download/contratos.csv'
+
+print("=" * 80)
+print("PIPELINE ETL V2 - São Paulo 2024 (Corrigido)")
+print("=" * 80)
+
+print("\n[1/5] Baixando CSV...")
+r = requests.get(CSV_URL, timeout=120)
+lines = r.text.split('\n')
+
+print(f"Download: {len(lines):,} linhas")
+print(f"Tamanho: {len(r.text):,} caracteres")
+
+# Pular linhas de cabeçalho (título do órgão)
+header_line = None
+for i, line in enumerate(lines):
+    if 'Nome do' in line or 'Contrato' in line:
+        header_line = i
+        print(f"Header encontrado na linha {i}")
+        break
+
+if header_line is None:
+    header_line = 4
+    print(f"Usando header padrão na linha {header_line}")
+
+header = lines[header_line].split(';')
+print(f"\nColunas no CSV ({len(header)}):")
+for i, h in enumerate(header):
+    print(f"  {i}: {h}")
+
+# Índices das colunas importantes
+# Baseado no CSV real de SP
+fornecedor_idx = 8  # "Fornecedor e Nome de Fantasia"
+valor_idx = 9       # "Valor(R$)"
+data_idx = 2        # "Data da Assinatura"
+orgao_idx = 0       # "Nome do Órgão"
+
+print(f"\nUsando índices:")
+print(f"  Fornecedor: {fornecedor_idx}")
+print(f"  Valor: {valor_idx}")
+print(f"  Data: {data_idx}")
+
+print("\n[2/5] Processando dados...")
+
+def limpar_valor(valor_str):
+    """Limpa valor monetário brasileiro"""
+    if not valor_str:
+        return None
+    
+    # Remover R$ e espaços
+    valor_str = valor_str.replace('R$', '').replace('R$ ', '')
+    
+    # Padrão brasileiro: 36.500,00 -> 36500.00
+    # Remove pontos de milhar
+    valor_str = valor_str.replace('.', '')
+    # Troca vírgula decimal por ponto
+    valor_str = valor_str.replace(',', '.')
+    # Remove qualquer outro caractere não-numérico
+    valor_str = re.sub(r'[^0-9.]', '', valor_str)
+    
+    try:
+        return float(valor_str) if valor_str else None
+    except:
+        return None
+
+dados = []
+for i, line in enumerate(lines[header_line + 1:], start=1):
+    if not line.strip():
+        continue
+    
+    cols = line.split(';')
+    if len(cols) < 10:
+        continue
+    
+    try:
+        fornecedor = cols[fornecedor_idx].strip().replace('"', '') if len(cols) > fornecedor_idx else ''
+        valor_str = cols[valor_idx].strip().replace('"', '') if len(cols) > valor_idx else '0'
+        data = cols[data_idx].strip().replace('"', '') if len(cols) > data_idx else None
+        orgao = cols[orgao_idx].strip().replace('"', '') if len(cols) > orgao_idx else 'Prefeitura SP'
+        
+        valor = limpar_valor(valor_str)
+        
+        if fornecedor and valor and valor > 0 and valor < 1000000000:  # Limite para evitar erros
+            dados.append((orgao, fornecedor, valor, data))
+    except Exception as e:
+        continue
+    
+    # Limitar para teste
+    if len(dados) >= 5000:
+        break
+
+print(f"✓ Processados: {len(dados)} registros válidos")
+
+# Mostrar amostra
+if dados:
+    print("\nAmostra de dados:")
+    for i, d in enumerate(dados[:3], 1):
+        print(f"  {i}. {d[1][:40]}... - R$ {d[2]:,.2f}")
+
+print("\n[3/5] Inserindo no banco...")
+conn = psycopg2.connect(os.getenv('DATABASE_URL'))
+cur = conn.cursor()
+
+# Criar tabela
+cur.execute("""
+    CREATE TABLE IF NOT EXISTS sp_contratos (
+        id SERIAL PRIMARY KEY,
+        orgao TEXT,
+        fornecedor TEXT,
+        valor NUMERIC,
+        data TEXT,
+        importado_em TIMESTAMP DEFAULT NOW()
+    )
+""")
+
+# Limpar dados anteriores de teste
+cur.execute("DELETE FROM sp_contratos WHERE importado_em < NOW() - INTERVAL '1 hour'")
+
+# Inserir dados
+inseridos = 0
+for d in dados:
+    try:
+        cur.execute("""
+            INSERT INTO sp_contratos (orgao, fornecedor, valor, data)
+            VALUES (%s, %s, %s, %s)
+        """, d)
+        inseridos += 1
+    except Exception as e:
+        if inseridos < 5:  # Mostrar apenas primeiros erros
+            print(f"Erro ao inserir: {e}")
+        continue
+
+conn.commit()
+print(f"✓ Inseridos: {inseridos} registros")
+
+print("\n[4/5] Calculando baseline...")
+cur.execute("""
+    SELECT 
+        COUNT(*) as total,
+        COUNT(DISTINCT fornecedor) as fornecedores_unicos,
+        AVG(valor) as valor_medio,
+        PERCENTILE_CONT(0.5) WITHIN GROUP (ORDER BY valor) as valor_mediano,
+        MAX(valor) as valor_maximo
+    FROM sp_contratos
+""")
+
+row = cur.fetchone()
+
+# Top fornecedores
+cur.execute("""
+    SELECT fornecedor, COUNT(*) as qtd, SUM(valor) as total_valor
+    FROM sp_contratos
+    GROUP BY fornecedor
+    ORDER BY qtd DESC
+    LIMIT 5
+""")
+
+top = cur.fetchall()
+
+# Calcular concentração do top 1
+total = row[0]
+if total > 0 and top:
+    cur.execute("""
+        SELECT COUNT(*) FROM sp_contratos WHERE fornecedor = %s
+    """, (top[0][0],))
+    top1_count = cur.fetchone()[0]
+    concentracao_top1 = (top1_count / total) * 100
+else:
+    concentracao_top1 = 0
+
+conn.close()
+
+print("\n" + "=" * 80)
+print("BASELINE SP 2024 - V2")
+print("=" * 80)
+print(f"Período: Janeiro a Dezembro de 2024")
+print(f"Total de contratos: {row[0]:,}")
+print(f"Fornecedores únicos: {row[1]:,}")
+print(f"Valor médio: R$ {row[2]:,.2f}")
+print(f"Valor mediano: R$ {row[3]:,.2f}")
+print(f"Valor máximo: R$ {row[4]:,.2f}")
+print(f"Concentração Top 1: {concentracao_top1:.1f}%")
+print("\nTop 5 fornecedores:")
+for i, f in enumerate(top, 1):
+    print(f"  {i}. {f[0][:50]}...")
+    print(f"     {f[1]} contratos, R$ {f[2]:,.2f}")
+print("=" * 80)
+print("\n✅ PIPELINE CONCLUÍDO COM SUCESSO!")
+print("=" * 80)
+ENDSCRIPT
+
+python pipeline_sp_v2.py

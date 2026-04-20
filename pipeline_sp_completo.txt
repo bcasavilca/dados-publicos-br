@@ -1,0 +1,172 @@
+#!/bin/bash
+# Pipeline completo para Railway
+
+cat > pipeline_sp.py << 'EOF'
+import requests
+import os
+import psycopg2
+import pandas as pd
+from io import StringIO
+import re
+
+CSV_URL = 'https://dados.prefeitura.sp.gov.br/dataset/6588aef7-20ff-4cec-b1e1-6c06520240c0/resource/fd48b7dd-c5f1-4352-963f-f1e5ebc6d61b/download/contratos.csv'
+
+print("=" * 80)
+print("PIPELINE ETL - São Paulo 2024")
+print("=" * 80)
+
+# 1. Download
+print("\n[1/5] Baixando CSV...")
+r = requests.get(CSV_URL, timeout=120)
+print(f"Download: {len(r.text):,} caracteres")
+
+# 2. Parse
+print("\n[2/5] Parseando CSV...")
+lines = r.text.split('\n')[4:]  # Pular cabeçalho
+lines = [l for l in lines if l.strip()]  # Remover vazias
+
+if len(lines) < 2:
+    print("✗ CSV vazio ou inválido")
+    exit(1)
+
+# Usar primeira linha como header
+header = lines[0].split(';')
+print(f"Colunas: {len(header)}")
+
+# 3. Transform
+print("\n[3/5] Transformando dados...")
+
+# Mapear índices das colunas importantes
+fornecedor_idx = None
+valor_idx = None
+data_idx = None
+orgao_idx = None
+
+for i, h in enumerate(header):
+    h_lower = h.lower().replace('"', '')
+    if any(x in h_lower for x in ['fornecedor', 'credor']):
+        fornecedor_idx = i
+    if any(x in h_lower for x in ['valor', 'valo']):
+        valor_idx = i
+    if any(x in h_lower for x in ['data', 'assinatura']):
+        data_idx = i
+    if any(x in h_lower for x in ['orgao', 'órgao']):
+        orgao_idx = i
+
+print(f"Índices encontrados:")
+print(f"  Fornecedor: {fornecedor_idx}")
+print(f"  Valor: {valor_idx}")
+print(f"  Data: {data_idx}")
+
+if fornecedor_idx is None or valor_idx is None:
+    print("✗ Colunas essenciais não encontradas")
+    print(f"Header: {header}")
+    exit(1)
+
+# Processar linhas
+dados = []
+for i, line in enumerate(lines[1:1000], 1):  # Limitar a 1000 para teste
+    if not line.strip():
+        continue
+    
+    cols = line.split(';')
+    if len(cols) < max(fornecedor_idx, valor_idx) + 1:
+        continue
+    
+    fornecedor = cols[fornecedor_idx].replace('"', '').strip()
+    valor_str = cols[valor_idx].replace('"', '').strip()
+    data = cols[data_idx].replace('"', '').strip() if data_idx else None
+    orgao = cols[orgao_idx].replace('"', '').strip() if orgao_idx else 'São Paulo'
+    
+    # Limpar valor
+    valor_str = valor_str.replace('R$', '').replace('.', '').replace(',', '.')
+    valor_str = re.sub(r'[^0-9.]', '', valor_str)
+    try:
+        valor = float(valor_str) if valor_str else 0
+    except:
+        valor = 0
+    
+    if fornecedor and valor > 0:
+        dados.append((orgao, fornecedor, valor, data))
+
+print(f"\n✓ Processados: {len(dados)} registros válidos")
+
+# 4. Load
+print("\n[4/5] Inserindo no banco...")
+conn = psycopg2.connect(os.getenv('DATABASE_URL'))
+cur = conn.cursor()
+
+# Criar tabela SP
+# Criar tabela SP
+cur.execute("""
+    CREATE TABLE IF NOT EXISTS sp_contratos (
+        id SERIAL PRIMARY KEY,
+        orgao TEXT,
+        fornecedor TEXT,
+        valor NUMERIC,
+        data TEXT,
+        importado_em TIMESTAMP DEFAULT NOW()
+    )
+""")
+
+# Limpar dados antigos de teste
+cur.execute("DELETE FROM sp_contratos WHERE importado_em < NOW() - INTERVAL '1 hour'")
+
+# Inserir
+inseridos = 0
+for d in dados:
+    try:
+        cur.execute("""
+            INSERT INTO sp_contratos (orgao, fornecedor, valor, data)
+            VALUES (%s, %s, %s, %s)
+        """, d)
+        inseridos += 1
+    except Exception as e:
+        print(f"Erro ao inserir: {e}")
+        continue
+
+conn.commit()
+print(f"✓ Inseridos: {inseridos} registros")
+
+# 5. Baseline
+print("\n[5/5] Gerando baseline...")
+cur.execute("""
+    SELECT 
+        COUNT(*) as total,
+        COUNT(DISTINCT fornecedor) as fornecedores_unicos,
+        AVG(valor) as valor_medio,
+        MAX(valor) as valor_maximo
+    FROM sp_contratos
+""")
+
+row = cur.fetchone()
+
+# Top fornecedores
+cur.execute("""
+    SELECT fornecedor, COUNT(*) as qtd, SUM(valor) as total
+    FROM sp_contratos
+    GROUP BY fornecedor
+    ORDER BY qtd DESC
+    LIMIT 5
+""")
+
+top = cur.fetchall()
+
+conn.close()
+
+print("\n" + "=" * 80)
+print("BASELINE SP 2024")
+print("=" * 80)
+print(f"Total: {row[0]:,} contratos")
+print(f"Fornecedores únicos: {row[1]:,}")
+print(f"Valor médio: R$ {row[2]:,.2f}")
+print(f"Valor máximo: R$ {row[3]:,.2f}")
+print("\nTop 5 fornecedores:")
+for i, f in enumerate(top, 1):
+    print(f"  {i}. {f[0][:40]}...")
+    print(f"     {f[1]} contratos, R$ {f[2]:,.2f}")
+print("=" * 80)
+print("\n✓ PIPELINE CONCLUÍDO!")
+EOF
+
+python pipeline_sp.py

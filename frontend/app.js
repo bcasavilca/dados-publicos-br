@@ -22,7 +22,7 @@ async function carregarDados() {
     mostrarLoading(true);
     
     try {
-        const response = await fetch(`${API_URL}/catalogo`);
+        const response = await fetch(`${API_URL}/buscar?q=`);
         const data = await response.json();
         
         allData = data.resultados || [];

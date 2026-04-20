@@ -1,0 +1,47 @@
+## ✨ NOVO PORTAL DE TRANSPARÊNCIA
+
+Obrigado por contribuir com o Dados-Públicos-BR!
+
+## 📝 Preencha as informações:
+
+### **Nome do Portal**
+`[Insira aqui]`
+
+### **URL**
+`[https://...]`
+
+### **Município/Estado**
+- Cidade: `[Ex: São Paulo]`
+- UF: `[SP]`
+
+### **Tipo de Portal**
+- [ ] Dados Abertos (API/Download)
+- [ ] Transparência (Consulta/Scraping)
+- [ ] Outro: `_______`
+
+### **Como acessar**
+O portal é fácil de encontrar? Se não, descreva:
+`[Ex: Menu superior → Serviços → Transparência]`
+
+### **Qualidade**
+- [ ] Alta (API estruturada, dados completos)
+- [ ] Média (Download CSV, dados básicos)
+- [ ] Baixa (Scraping, HTML/PDF)
+
+---
+
+## ✅ Checklist do Revisor
+
+Antes de aprovar:
+- [ ] URL está acessível
+- [ ] Confirmação: é portal público de dados
+- [ ] Localização correta
+- [ ] Formato segue padrão do catálogo
+
+## 🚀 Depois de enviar
+
+Você será notificado quando:
+1. O portal for adicionado ao catálogo
+2. O site for atualizado
+
+Obrigado pela contribuição!

@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dados Publicos BR - Busca Direta</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+        .container { max-width: 900px; margin: 0 auto; }
+        h1 { 
+            text-align: center; 
+            color: white; 
+            margin-bottom: 10px;
+            font-size: 2.5em;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+        .subtitle { 
+            text-align: center; 
+            color: rgba(255,255,255,0.9); 
+            margin-bottom: 30px;
+            font-size: 1.1em;
+        }
+        
+        .search-box {
+            background: white;
+            border-radius: 50px;
+            padding: 8px;
+            display: flex;
+            gap: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+        }
+        .search-box input {
+            flex: 1;
+            border: none;
+            font-size: 16px;
+            outline: none;
+            padding: 12px 20px;
+            border-radius: 40px;
+        }
+        .search-box button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 32px;
+            border-radius: 40px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 16px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .search-box button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+        
+        .stats { 
+            color: white; 
+            margin-bottom: 20px;
+            font-size: 14px;
+            text-align: center;
+            background: rgba(255,255,255,0.1);
+            padding: 10px 20px;
+            border-radius: 20px;
+            display: inline-block;
+        }
+        
+        .filter-bar {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .filter-btn {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: 1px solid rgba(255,255,255,0.3);
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 13px;
+            transition: all 0.2s;
+        }
+        .filter-btn:hover, .filter-btn.active {
+            background: white;
+            color: #667eea;
+        }
+        
+        .results {
+            display: grid;
+            gap: 16px;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            border-left: 4px solid #667eea;
+        }
+        .card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 40px rgba(0,0,0,0.15);
+        }
+        .card h3 { 
+            color: #333; 
+            margin-bottom: 10px;
+            font-size: 18px;
+            font-weight: 600;
+        }
+        .card p { 
+            color: #666; 
+            font-size: 14px; 
+            margin-bottom: 12px;
+            line-height: 1.5;
+        }
+        .card .meta {
+            display: flex;
+            gap: 10px;
+            font-size: 12px;
+            flex-wrap: wrap;
+        }
+        .card .meta span {
+            background: #e3f2fd;
+            color: #1976d2;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-weight: 500;
+        }
+        .card .meta span.uf { background: #f3e5f5; color: #7b1fa2; }
+        .card .meta span.tipo { background: #e8f5e9; color: #388e3c; }
+        .card .meta span.qualidade-alta { background: #e8f5e9; color: #2e7d32; }
+        .card .meta span.qualidade-media { background: #fff3e0; color: #f57c00; }
+        .card .meta span.qualidade-baixa { background: #ffebee; color: #c62828; }
+        
+        .card a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            margin-top: 10px;
+        }
+        .card a:hover {
+            text-decoration: underline;
+        }
+        
+        .empty, .loading {
+            text-align: center;
+            padding: 60px;
+            color: white;
+            font-size: 18px;
+        }
+        
+        .loading::after {
+            content: '';
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 2px solid white;
+            border-top-color: transparent;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-left: 10px;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        .error {
+            background: rgba(255,255,255,0.95);
+            color: #c62828;
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Dados Publicos BR</h1>
+        <p class="subtitle" id="totalPortais">Carregando portais...</p>
+        
+        <div class="search-box">
+            <input type="text" id="searchInput" placeholder="Buscar por cidade, estado, orgao..." autofocus>
+            <button onclick="buscar()">Buscar</button>
+        </div>
+        
+        <div style="text-align: center;">
+            <div id="stats" class="stats"></div>
+        </div>
+        
+        <div class="filter-bar" id="filters" style="display: none;">
+            <button class="filter-btn active" onclick="filterUF('')">Todos</button>
+            <button class="filter-btn" onclick="filterUF('RN')">RN</button>
+            <button class="filter-btn" onclick="filterUF('AL')">AL</button>
+            <button class="filter-btn" onclick="filterUF('CE')">CE</button>
+            <button class="filter-btn" onclick="filterUF('PE')">PE</button>
+            <button class="filter-btn" onclick="filterUF('PB')">PB</button>
+        </div>
+        
+        <div id="results"></div>
+    </div>
+
+    <script>
+        // URL do CSV raw no GitHub
+        const CSV_URL = 'https://raw.githubusercontent.com/bcasavilca/dados-publicos-br/main/data/catalogos.csv';
+        
+        let todosDados = [];
+        let dadosFiltrados = [];
+        
+        // Carregar dados ao iniciar
+        async function carregarDados() {
+            const resultsDiv = document.getElementById('results');
+            const subtitle = document.getElementById('totalPortais');
+            
+            resultsDiv.innerHTML = '<div class="loading">Carregando dados...</div>';
+            
+            try {
+                const response = await fetch(CSV_URL);
+                const csvText = await response.text();
+                
+                // Parse CSV simples
+                const linhas = csvText.split('\n');
+                const headers = linhas[0].split(',').map(h => h.trim());
+                
+                todosDados = [];
+                for (let i = 1; i < linhas.length; i++) {
+                    if (!linhas[i].trim()) continue;
+                    
+                    // Parse linha CSV considerando aspas
+                    const valores = parseCSVLine(linhas[i]);
+                    
+                    const item = {};
+                    headers.forEach((h, idx) => {
+                        item[h] = valores[idx] || '';
+                    });
+                    
+                    if (item.Titulo && item.URL) {
+                        todosDados.push(item);
+                    }
+                }
+                
+                dadosFiltrados = [...todosDados];
+                
+                subtitle.textContent = `Busque em ${todosDados.length} portais de transparencia governamental`;
+                document.getElementById('filters').style.display = 'flex';
+                
+                mostrarResultados(dadosFiltrados);
+                
+            } catch (error) {
+                resultsDiv.innerHTML = `<div class="error">Erro ao carregar dados: ${error.message}</div>`;
+                console.error('Erro:', error);
+            }
+        }
+        
+        function parseCSVLine(line) {
+            const result = [];
+            let current = '';
+            let inQuotes = false;
+            
+            for (let i = 0; i < line.length; i++) {
+                const char = line[i];
+                
+                if (char === '"') {
+                    inQuotes = !inQuotes;
+                } else if (char === ',' && !inQuotes) {
+                    result.push(current.trim());
+                    current = '';
+                } else {
+                    current += char;
+                }
+            }
+            result.push(current.trim());
+            return result;
+        }
+        
+        function buscar() {
+            const termo = document.getElementById('searchInput').value.toLowerCase();
+            
+            if (!termo) {
+                dadosFiltrados = [...todosDados];
+            } else {
+                dadosFiltrados = todosDados.filter(p => {
+                    const searchText = `${p.Titulo} ${p.Municipio} ${p.UF} ${p.Categoria}`.toLowerCase();
+                    return searchText.includes(termo);
+                });
+            }
+            
+            mostrarResultados(dadosFiltrados);
+        }
+        
+        function filterUF(uf) {
+            // Atualizar botoes
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            if (!uf) {
+                dadosFiltrados = [...todosDados];
+            } else {
+                dadosFiltrados = todosDados.filter(p => p.UF === uf);
+            }
+            
+            document.getElementById('searchInput').value = '';
+            mostrarResultados(dadosFiltrados);
+        }
+        
+        function mostrarResultados(resultados) {
+            const resultsDiv = document.getElementById('results');
+            const statsDiv = document.getElementById('stats');
+            
+            statsDiv.textContent = `${resultados.length} resultados encontrados`;
+            
+            if (resultados.length === 0) {
+                resultsDiv.innerHTML = '<div class="empty">Nenhum resultado encontrado</div>';
+                return;
+            }
+            
+            resultsDiv.innerHTML = resultados.map(p => {
+                const qualidadeClass = p.Qualidade === 'Alta' ? 'qualidade-alta' : 
+                                     p.Qualidade === 'Media' ? 'qualidade-media' : 'qualidade-baixa';
+                
+                return `
+                    <div class="card">
+                        <h3>${p.Titulo}</h3>
+                        <p>${p.Municipio || 'N/A'} - ${p.UF || 'N/A'} | ${p.Esfera || 'N/A'} | ${p.Poder || 'N/A'}</p>
+                        <div class="meta">
+                            <span class="uf">${p.UF}</span>
+                            <span class="tipo">${p.TipoFonte}</span>
+                            <span class="${qualidadeClass}">${p.Qualidade}</span>
+                            <span>${p.Formato}</span>
+                        </div>
+                        ${p.URL ? `<a href="${p.URL}" target="_blank">🔗 Acessar portal</a>` : ''}
+                    </div>
+                `;
+            }).join('');
+        }
+        
+        // Eventos
+        document.getElementById('searchInput').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') buscar();
+        });
+        
+        // Carregar ao iniciar
+        carregarDados();
+    </script>
+</body>
+</html>

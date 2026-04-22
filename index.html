@@ -3,162 +3,241 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dados Públicos BR</title>
+    <title>Dados Publicos BR - 95 Portais</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { 
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: #f8f9fa;
-            padding: 40px 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
         }
-        .container { max-width: 800px; margin: 0 auto; }
-        h1 { text-align: center; color: #1a73e8; margin-bottom: 10px; }
-        .subtitle { text-align: center; color: #5f6368; margin-bottom: 30px; }
+        .container { max-width: 900px; margin: 0 auto; }
+        h1 { 
+            text-align: center; 
+            color: white; 
+            margin-bottom: 5px;
+            font-size: 2em;
+        }
+        .subtitle { 
+            text-align: center; 
+            color: rgba(255,255,255,0.9); 
+            margin-bottom: 20px;
+            font-size: 1em;
+        }
         
         .search-box {
             background: white;
-            border-radius: 24px;
-            padding: 12px 24px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            border-radius: 50px;
+            padding: 5px;
             display: flex;
-            gap: 12px;
-            margin-bottom: 30px;
+            gap: 5px;
+            margin-bottom: 15px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
         }
         .search-box input {
             flex: 1;
             border: none;
             font-size: 16px;
             outline: none;
+            padding: 12px 20px;
+            border-radius: 40px;
         }
         .search-box button {
-            background: #1a73e8;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
             border: none;
-            padding: 10px 24px;
+            padding: 12px 24px;
+            border-radius: 40px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+        
+        .filter-bar {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .filter-btn {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: 1px solid rgba(255,255,255,0.3);
+            padding: 6px 14px;
             border-radius: 20px;
             cursor: pointer;
-            font-weight: 500;
+            font-size: 12px;
+        }
+        .filter-btn:hover, .filter-btn.active {
+            background: white;
+            color: #667eea;
         }
         
         .stats { 
-            color: #5f6368; 
-            margin-bottom: 20px;
+            color: white; 
+            margin-bottom: 15px;
             font-size: 14px;
+            text-align: center;
         }
         
-        .results { display: grid; gap: 16px; }
+        .results { display: grid; gap: 12px; }
         
         .card {
             background: white;
             border-radius: 12px;
-            padding: 20px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            padding: 16px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
         }
         .card h3 { 
-            color: #1a73e8; 
+            color: #333; 
             margin-bottom: 8px;
-            font-size: 18px;
+            font-size: 16px;
         }
         .card p { 
-            color: #5f6368; 
-            font-size: 14px; 
+            color: #666; 
+            font-size: 13px; 
             margin-bottom: 8px;
-            line-height: 1.5;
         }
         .card .meta {
             display: flex;
-            gap: 16px;
-            font-size: 12px;
-            color: #80868b;
+            gap: 8px;
+            font-size: 11px;
+            flex-wrap: wrap;
         }
         .card .meta span {
-            background: #e8f0fe;
-            padding: 4px 12px;
-            border-radius: 12px;
+            background: #e3f2fd;
+            color: #1976d2;
+            padding: 3px 10px;
+            border-radius: 10px;
         }
-        
-        .empty, .loading {
-            text-align: center;
-            padding: 60px;
-            color: #5f6368;
-        }
-        
-        .loading::after {
-            content: '';
+        .card a {
+            color: #667eea;
+            text-decoration: none;
+            font-size: 13px;
             display: inline-block;
-            width: 20px;
-            height: 20px;
-            border: 2px solid #1a73e8;
-            border-top-color: transparent;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-            margin-left: 10px;
+            margin-top: 8px;
         }
         
-        @keyframes spin { to { transform: rotate(360deg); } }
+        .loading, .empty {
+            text-align: center;
+            padding: 40px;
+            color: white;
+        }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>🔍 Dados Públicos BR</h1>
-        <p class="subtitle">Busque em 85 portais de transparência governamental</p>
+        <h1>Dados Publicos BR</h1>
+        <p class="subtitle" id="subtitle">Carregando...</p>
         
         <div class="search-box">
-            <input type="text" id="searchInput" placeholder="Buscar portais..." value="Fortaleza">
+            <input type="text" id="searchInput" placeholder="Buscar cidade, estado..." autofocus>
             <button onclick="buscar()">Buscar</button>
         </div>
         
-        <div id="stats" class="stats"></div>
+        <div class="filter-bar" id="filters">
+            <button class="filter-btn active" onclick="filterUF('')">Todos</button>
+            <button class="filter-btn" onclick="filterUF('RN')">RN</button>
+            <button class="filter-btn" onclick="filterUF('AL')">AL</button>
+            <button class="filter-btn" onclick="filterUF('CE')">CE</button>
+            <button class="filter-btn" onclick="filterUF('PE')">PE</button>
+            <button class="filter-btn" onclick="filterUF('PB')">PB</button>
+        </div>
+        
+        <div class="stats" id="stats"></div>
         <div id="results"></div>
     </div>
 
     <script>
-        const API_URL = 'https://web-production-64ea5.up.railway.app';
+        const CSV_URL = 'https://raw.githubusercontent.com/bcasavilca/dados-publicos-br/main/data/catalogos.csv';
+        let todosDados = [];
+        let dadosFiltrados = [];
         
-        async function buscar() {
-            const termo = document.getElementById('searchInput').value;
-            const resultsDiv = document.getElementById('results');
-            const statsDiv = document.getElementById('stats');
-            
-            resultsDiv.innerHTML = '<div class="loading">Buscando...</div>';
-            statsDiv.textContent = '';
+        async function carregarDados() {
+            document.getElementById('results').innerHTML = '<div class="loading">Carregando...</div>';
             
             try {
-                const response = await fetch(`${API_URL}/search?q=${encodeURIComponent(termo)}`);
-                const data = await response.json();
+                const response = await fetch(CSV_URL);
+                const csvText = await response.text();
+                const linhas = csvText.split('\n');
+                const headers = linhas[0].split(',').map(h => h.trim());
                 
-                statsDiv.textContent = `${data.total} resultados encontrados`;
-                
-                if (data.total === 0) {
-                    resultsDiv.innerHTML = '<div class="empty">Nenhum resultado</div>';
-                    return;
+                todosDados = [];
+                for (let i = 1; i < linhas.length; i++) {
+                    if (!linhas[i].trim()) continue;
+                    const valores = parseCSVLine(linhas[i]);
+                    const item = {};
+                    headers.forEach((h, idx) => item[h] = valores[idx] || '');
+                    if (item.Titulo && item.URL) todosDados.push(item);
                 }
                 
-                resultsDiv.innerHTML = data.resultados.map(p => `
-                    <div class="card">
-                        <h3>${p.titulo}</h3>
-                        <p>${p.descricao || 'Sem descrição'}</p>
-                        <div class="meta">
-                            <span>${p.estado || 'N/A'}</span>
-                            <span>${p.orgao || 'N/A'}</span>
-                            <span>${p.tipo || 'Portal'}</span>
-                        </div>
-                        ${p.url ? `<p><a href="${p.url}" target="_blank">🔗 Acessar</a></p>` : ''}
-                    </div>
-                `).join('');
+                dadosFiltrados = [...todosDados];
+                document.getElementById('subtitle').textContent = `Busque em ${todosDados.length} portais de transparencia`;
+                mostrarResultados(dadosFiltrados);
                 
             } catch (error) {
-                resultsDiv.innerHTML = `<div class="empty">Erro: ${error.message}</div>`;
+                document.getElementById('results').innerHTML = '<div class="empty">Erro ao carregar dados</div>';
             }
         }
         
-        // Buscar ao carregar
-        buscar();
+        function parseCSVLine(line) {
+            const result = [];
+            let current = '';
+            let inQuotes = false;
+            for (let i = 0; i < line.length; i++) {
+                const char = line[i];
+                if (char === '"') inQuotes = !inQuotes;
+                else if (char === ',' && !inQuotes) { result.push(current.trim()); current = ''; }
+                else current += char;
+            }
+            result.push(current.trim());
+            return result;
+        }
         
-        // Buscar ao pressionar Enter
-        document.getElementById('searchInput').addEventListener('keypress', (e) => {
+        function buscar() {
+            const termo = document.getElementById('searchInput').value.toLowerCase();
+            dadosFiltrados = termo ? todosDados.filter(p => 
+                `${p.Titulo} ${p.Municipio} ${p.UF}`.toLowerCase().includes(termo)
+            ) : [...todosDados];
+            mostrarResultados(dadosFiltrados);
+        }
+        
+        function filterUF(uf) {
+            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+            event.target.classList.add('active');
+            dadosFiltrados = uf ? todosDados.filter(p => p.UF === uf) : [...todosDados];
+            document.getElementById('searchInput').value = '';
+            mostrarResultados(dadosFiltrados);
+        }
+        
+        function mostrarResultados(resultados) {
+            document.getElementById('stats').textContent = `${resultados.length} resultados`;
+            
+            if (resultados.length === 0) {
+                document.getElementById('results').innerHTML = '<div class="empty">Nenhum resultado</div>';
+                return;
+            }
+            
+            document.getElementById('results').innerHTML = resultados.map(p => `
+                <div class="card">
+                    <h3>${p.Titulo}</h3>
+                    <p>${p.Municipio || 'N/A'} - ${p.UF} | ${p.Esfera} | ${p.TipoFonte}</p>
+                    <div class="meta">
+                        <span>${p.UF}</span>
+                        <span>${p.Qualidade}</span>
+                        <span>${p.Formato}</span>
+                    </div>
+                    <a href="${p.URL}" target="_blank">Acessar portal</a>
+                </div>
+            `).join('');
+        }
+        
+        document.getElementById('searchInput').addEventListener('keypress', e => {
             if (e.key === 'Enter') buscar();
         });
+        
+        carregarDados();
     </script>
 </body>
 </html>

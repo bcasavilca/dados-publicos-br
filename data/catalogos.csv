@@ -11,6 +11,7 @@ Maracanau Dados Abertos,http://dados.maracanau.ce.gov.br/,Maracanau,CE,Municipal
 Natal Dados Abertos,http://dados.natal.rn.gov.br/,Natal,RN,Municipal,Executivo,DadosAbertos,API/Download,CSV/JSON,Alta,Frequente,Geral
 Portal da Transparencia Camara Municipal de Natal,https://www.cmnat.rn.gov.br/portal-da-transparencia,Natal,RN,Municipal,Legislativo,Transparencia,Scraping,HTML/XLS/PDF,Baixa,Irregular,Legislativo
 Transparencia RN,http://www.transparencia.rn.gov.br/,,RN,Estadual,Executivo,Transparencia,Scraping,HTML/PDF,Baixa,Mensal,Financas
+Transparencia Pendencias,https://pendencias.rn.gov.br/transparencia/,Pendencias,RN,Municipal,Executivo,Transparencia,Scraping,HTML/PDF,Media,Irregular,Financas
 Mossoro Dados Abertos,http://dados.mossoro.rn.gov.br/,Mossoro,RN,Municipal,Executivo,DadosAbertos,Download,CSV/JSON,Media,Trimestral,Geral
 Joao Pessoa Dados Abertos,http://dados.joaopessoa.pb.gov.br/,Joao Pessoa,PB,Municipal,Executivo,DadosAbertos,API/Download,CSV/JSON,Alta,Frequente,Geral
 Transparencia Joao Pessoa,https://transparencia.joaopessoa.pb.gov.br/,Joao Pessoa,PB,Municipal,Executivo,Transparencia,Scraping,HTML/PDF,Baixa,Mensal,Financas
@@ -85,5 +86,23 @@ Dados Abertos Tocantins,https://dados.to.gov.br/,,TO,Estadual,Executivo,DadosAbe
 Portal da Transparencia Barra de Sao Miguel,https://www.barradesaomiguel.al.gov.br/portal-da-transparencia,Barra de Sao Miguel,AL,Municipal,Executivo,Transparencia,Scraping,HTML/PDF,Baixa,Mensal,Financas
 Transparencia Brasilia,https://transparencia.brasilia.df.gov.br/,Brasilia,DF,Distrital,Executivo,Transparencia,Scraping,HTML/PDF,Baixa,Mensal,Financas
 Dados Abertos Amazonas,https://dados.amazonas.am.gov.br/,,AM,Estadual,Executivo,DadosAbertos,API/Download,CSV/JSON,Alta,Frequente,Geral
- 
+
  
+ 
+Transparencia Sao Jose de Mipibu,https://saojosedemipibu.rn.gov.br/portal-da-transparencia/,Sao Jose de Mipibu,RN,Municipal,Executivo,Transparencia,Scraping,HTML/PDF,Media,Irregular,Financas
+Transparencia Sao Vicente,https://saovicente.rn.gov.br/transparencias,Sao Vicente,RN,Municipal,Executivo,Transparencia,Scraping,HTML/PDF,Media,Irregular,Financas
+Transparencia Parnamirim,https://transparencia.parnamirim.rn.gov.br/,Parnamirim,RN,Municipal,Executivo,Transparencia,Scraping,HTML/PDF,Alta,Mensal,Financas
+Transparencia Serra Negra,https://serranegra.rn.gov.br/acesso-a-informacao/portal-da-transparencia,Serra Negra,RN,Municipal,Executivo,Transparencia,Scraping,HTML/PDF,Media,Irregular,Financas
+Transparencia Nisia Floresta,https://nisiafloresta.rn.gov.br/portal-da-transparencia/,Nisia Floresta,RN,Municipal,Executivo,Transparencia,Scraping,HTML/PDF,Media,Irregular,Financas
+Transparencia Santa Cruz,https://santacruz.rn.gov.br/acessoainformacao,Santa Cruz,RN,Municipal,Executivo,Transparencia,Scraping,HTML/PDF,Media,Irregular,Financas
+Transparencia Pedro Avelino,https://www.pedroavelino.rn.gov.br/transparencia/portal-transparencia,Pedro Avelino,RN,Municipal,Executivo,Transparencia,Scraping,HTML/PDF,Media,Irregular,Financas
+Transparencia Sao Goncalo,https://saogoncalo.rn.gov.br/acessoainformacao,Sao Goncalo,RN,Municipal,Executivo,Transparencia,Scraping,HTML/PDF,Media,Irregular,Financas
+
+Transparencia Sao Jose de Mipibu,https://saojosedemipibu.rn.gov.br/portal-da-transparencia/,Sao Jose de Mipibu,RN,Municipal,Executivo,Transparencia,Scraping,HTML/PDF,Media,Irregular,Financas
+Transparencia Sao Vicente,https://saovicente.rn.gov.br/transparencias,Sao Vicente,RN,Municipal,Executivo,Transparencia,Scraping,HTML/PDF,Media,Irregular,Financas
+Transparencia Parnamirim,https://transparencia.parnamirim.rn.gov.br/,Parnamirim,RN,Municipal,Executivo,Transparencia,Scraping,HTML/PDF,Alta,Mensal,Financas
+Transparencia Serra Negra,https://serranegra.rn.gov.br/acesso-a-informacao/portal-da-transparencia,Serra Negra,RN,Municipal,Executivo,Transparencia,Scraping,HTML/PDF,Media,Irregular,Financas
+Transparencia Nisia Floresta,https://nisiafloresta.rn.gov.br/portal-da-transparencia/,Nisia Floresta,RN,Municipal,Executivo,Transparencia,Scraping,HTML/PDF,Media,Irregular,Financas
+Transparencia Santa Cruz,https://santacruz.rn.gov.br/acessoainformacao,Santa Cruz,RN,Municipal,Executivo,Transparencia,Scraping,HTML/PDF,Media,Irregular,Financas
+Transparencia Pedro Avelino,https://www.pedroavelino.rn.gov.br/transparencia/portal-transparencia,Pedro Avelino,RN,Municipal,Executivo,Transparencia,Scraping,HTML/PDF,Media,Irregular,Financas
+Transparencia Sao Goncalo,https://saogoncalo.rn.gov.br/acessoainformacao,Sao Goncalo,RN,Municipal,Executivo,Transparencia,Scraping,HTML/PDF,Media,Irregular,Financas
